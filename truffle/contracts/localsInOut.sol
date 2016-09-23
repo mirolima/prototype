@@ -1,5 +1,5 @@
 import "./owned.sol";
-import "./localsCointoken.sol";
+import "./ARCToken.sol";
 //onlyReputable
 
 contract localsInOut is owned {
@@ -9,6 +9,9 @@ contract localsInOut is owned {
   event OfferClaimed(uint offerNumber, address claimer, address creator, uint amount);
   Offer[] public offers;
   uint public numOffers;
+
+  address public REPcontract; // the address of the REP contract.
+
 
   struct Offer {
     address creator;
@@ -87,8 +90,25 @@ contract localsInOut is owned {
 
   function executeOffer(uint offerNumber, bytes transactionBytecode) returns (int result) {
       Offer o = offers[offerNumber];
+      mintRep(o.creator,o.amount);
+      mintRep(o.claimer,o.amount);
+
       // amount 1% to DAO and rest send to claimer
   }
 
+
+  // REP token functionality
+  function setREPContract(address _repcontract) onlyOwner {
+      REPcontract = _repcontract;
+  }
+
+  function mintRep(address _to,uint256 _value){
+      var REPTokencontract = REPToken(REPcontract);
+      REPTokencontract.mintToken(_to,_value);
+  }
+
+
   function kill() { if (msg.sender == owner) suicide(owner); }
+
+
 }

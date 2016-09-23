@@ -231,13 +231,13 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("owned error: Please call setProvider() first before calling new().");
+      throw new Error("SafeMath error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("owned error: contract binary not set. Can't deploy new instance.");
+      throw new Error("SafeMath error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -256,7 +256,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("owned contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of owned: " + unlinked_libraries);
+      throw new Error("SafeMath contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of SafeMath: " + unlinked_libraries);
     }
 
     var self = this;
@@ -297,7 +297,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to owned.at(): " + address);
+      throw new Error("Invalid address passed to SafeMath.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -308,7 +308,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: owned not deployed or address not set.");
+      throw new Error("Cannot find deployed address: SafeMath not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -348,40 +348,10 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.all_networks = {
   "default": {
-    "abi": [
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "newOwner",
-            "type": "address"
-          }
-        ],
-        "name": "transferOwnership",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "type": "constructor"
-      }
-    ],
-    "unlinked_binary": "0x606060405260008054600160a060020a0319163317905560998060226000396000f3606060405260e060020a60003504638da5cb5b81146024578063f2fde38b146042575b005b606d60005473ffffffffffffffffffffffffffffffffffffffff1681565b60226004356000543373ffffffffffffffffffffffffffffffffffffffff9081169116146077576002565b6060908152602090f35b6000805473ffffffffffffffffffffffffffffffffffffffff1916821790555056",
+    "abi": [],
+    "unlinked_binary": "0x606060405260068060106000396000f3606060405200",
     "events": {},
-    "updated_at": 1474621444658,
-    "links": {}
+    "updated_at": 1474621444665
   }
 };
 
@@ -466,7 +436,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "owned";
+  Contract.contract_name   = Contract.prototype.contract_name   = "SafeMath";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.2.0";
 
   // Allow people to opt-in to breaking changes now.
@@ -506,6 +476,6 @@ var SolidityEvent = require("web3/lib/web3/event.js");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.owned = Contract;
+    window.SafeMath = Contract;
   }
 })();
