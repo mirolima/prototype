@@ -8,84 +8,63 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<script src="../bower_components/page/page.js"></script>
-<script>
+<!-- <script src="../bower_components/page/page.js"></script>
+ --><script>
   window.addEventListener('WebComponentsReady', function() {
 
     // We use Page.js for routing. This is a Micro
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
+    // page('/', function () {
+    //   app.route = 'init';
+    //   //app.scrollPageToTop();
+    // });
 
-    // Removes end / from app.baseUrl which page.base requires for production
-    if (window.location.port === '') {  // if production
-      page.base(app.baseUrl.replace(/\/$/, ''));
-    }
+    // page('/sync', function () {
+    //   app.route = 'sync';
+    //   //app.scrollPageToTop();
+    // });
 
-    // Middleware
-    function scrollToTop(ctx, next) {
-      app.scrollPageToTop();
-      next();
-    }
+    // page('/backup', function () {
+    //   app.route = 'backup';
+    //   //app.scrollPageToTop();
+    // });
 
-    function closeDrawer(ctx, next) {
-      app.closeDrawer();
-      next();
-    }
+    // page('/home', function () {
+    //   app.route = 'home';
+    //   //app.scrollPageToTop();
+    // });
 
-    function centerMap(ctx, next) {
-      var map = document.querySelector('mapbox-map');
-      map.map.invalidateSize();
-    }
+    // page('/master', function () {
+    //   app.route = 'master';
+    //   //app.scrollPageToTop();
+    // });
 
-    // Routes
-    page('*', scrollToTop, closeDrawer, function(ctx, next) {
-      next();
-      centerMap();
-    });
+    // page('/users/:name', function (data) {
+    //   app.route = 'user-info';
+    //   app.params = data.params;
+    //   //app.scrollPageToTop();
+    // });
 
-    page('/', function() {
-      app.route = 'home';
-      centerMap();
-    });
+    // page('/iomsg', function () {
+    //   app.route = 'iomsg';
+    //   //app.scrollPageToTop();
+    // });
 
-    page('/newoffer', function() {
-      var viewoffer = document.querySelector('new-offer');
-      viewoffer.offerview = 'first';
-      app.route = 'newoffer';
-    });
+    // page('/contact', function () {
+    //   app.route = 'contact';
+    //   //app.scrollPageToTop();
+    // });
 
-    page(app.baseUrl, function() {
-      app.route = 'home';
-    });
+    // page('/stats', function () {
+    //   app.route = 'stats';
+    //   //app.scrollPageToTop();
+    // });
 
-    page('/users', function() {
-      app.route = 'users';
-    });
-
-    page('/backup', function() {
-      app.route = 'backup';
-    });
-
-    page('/offer/:offerid', function(data) {
-      app.route = 'offer';
-      app.params = data.params;
-    });
-
-    page('/contact', function() {
-      app.route = 'contact';
-    });
-
-    // 404
-    page('*', function() {
-      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
-      app.$.toast.show();
-      page.redirect(app.baseUrl);
-    });
-
-    // add #! before urls
-    page({
-      hashbang: true
-    });
+    // // add #! before urls
+    // page({
+    //   hashbang: true
+    // });
 
   });
 </script>

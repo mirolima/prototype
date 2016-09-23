@@ -15,76 +15,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
 
-  // Sets app default base URL
-  app.baseUrl = '/';
-  if (window.location.port === '') {  // if production
-    // Uncomment app.baseURL below and
-    // set app.baseURL to '/your-pathname/' if running from folder in production
-    // app.baseUrl = '/polymer-starter-kit/';
-  }
-
-  app.displayInstalledToast = function() {
-    // Check to make sure caching is actually enabled—it won't be in the dev environment.
-    if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {
-      Polymer.dom(document).querySelector('#caching-complete').show();
-    }
-  };
-
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
     console.log('Our app is ready to rock!');
-    app.up = false;
   });
 
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
+    //app.generate();
     // imports are loaded and elements have been registered
   });
 
-  // Main area's paper-scroll-header-panel custom condensing transformation of
-  // the appName in the middle-container and the bottom title in the bottom-container.
-  // The appName is moved to top and shrunk on condensing. The bottom sub title
-  // is shrunk to nothing on condensing.
-  window.addEventListener('paper-header-transform', function(e) {
-    var appName = Polymer.dom(document).querySelector('#mainToolbar .app-name');
-    var middleContainer = Polymer.dom(document).querySelector('#mainToolbar .middle-container');
-    var bottomContainer = Polymer.dom(document).querySelector('#mainToolbar .bottom-container');
-    var detail = e.detail;
-    var heightDiff = detail.height - detail.condensedHeight;
-    var yRatio = Math.min(1, detail.y / heightDiff);
-    // appName max size when condensed. The smaller the number the smaller the condensed size.
-    var maxMiddleScale = 0.50;
-    var auxHeight = heightDiff - detail.y;
-    var auxScale = heightDiff / (1 - maxMiddleScale);
-    var scaleMiddle = Math.max(maxMiddleScale, auxHeight / auxScale + maxMiddleScale);
-    var scaleBottom = 1 - yRatio;
+  function importPage(url){
+    return new Promise(function(resolve, reject){
+      Polymer.Base.importHref(url, function(e){
+        resolve(e.target.import);
+      }, reject);
+    });
+  }
 
-    // Move/translate middleContainer
-    Polymer.Base.transform('translate3d(0,' + yRatio * 100 + '%,0)', middleContainer);
-
-    // Scale bottomContainer and bottom sub title to nothing and back
-    Polymer.Base.transform('scale(' + scaleBottom + ') translateZ(0)', bottomContainer);
-
-    // Scale middleContainer appName
-    Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
-  });
-
-  // Scroll page to top and expand header
-  app.scrollPageToTop = function() {
-    app.$.headerPanelMain.scrollToTop(true);
+  app.generate = function(){
+    console.log('New user!');
+    importPage('/elements/locals-newuser/locals-newuser.html').then(function(){
+      var element = document.createElement('locals-newuser');
+      element.id = 'newuser';
+      document.body.appendChild(element);
+    }, function(err){
+      console.log(err, 'error');
+    });
   };
 
-  app.closeDrawer = function() {
-    app.$.paperDrawerPanel.closeDrawer();
-  };
-
-  app.home = function() {
-    page('/');
-  };
-  app.toggledownup = function(){
-    app.up=!app.up;
-    console.log(app.up);
+  app.homestate = function(){
+    //debugger;
+    console.log('Existing user');
+    importPage('/elements/locals-user/locals-user.html').then(function(){
+      var element = document.createElement('locals-user');
+      element.id = 'user';
+      document.body.appendChild(element);
+    }, function(err){
+      console.log(err, 'error');
+    });
   };
 
 })(document);

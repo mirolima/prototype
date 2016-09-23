@@ -1,0 +1,171 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="locals-dialogue">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        background-color: white;
+        width: 100%;
+
+      }
+
+      h1 {
+      @apply(--opensans-light);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 22px;
+      line-height: 28px;
+      }
+
+
+      h2 {
+        @apply(--locals-font-h2);
+      }
+
+      p {
+        @apply(--locals-font-body1);
+      }
+
+      small {
+        @apply(--locals-font-small);
+
+      }
+
+
+      .total {
+        width: 100%;
+        @apply(--layout-vertical);
+        @apply(--layout-start);
+        box-sizing: border-box;
+        padding: 10vw;
+      }
+
+      .topbar {
+        width: 100%;
+        background-color: transparent;
+        height: var(--topbar-height);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        box-sizing: border-box;
+        padding: 10px 20px 10px 20px;
+      }
+
+      .flex {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
+
+      .msg {
+        width: 100%;
+      }
+
+
+    </style>
+
+    <div class="topbar">
+      <p class="flex" on-tap="change"></p>
+      <p>{{msglength}}</p>
+      <locals-button bgrgba="0,0,0,0" icon="declinenew" on-tap="toHome" small id="exitbtn"></locals-button>
+    </div>
+
+    <div class="total">
+      <template is="dom-repeat" items="{{msg}}">
+        <div class="msg">
+          <h1>{{item.content}}</h1>
+        </div>
+      </template>
+    </div>
+
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'locals-dialogue',
+
+      properties: {
+        msg: {
+          type: Array,
+          value: [],
+          observer: '_msg',
+          notify: true
+        },
+        msglength: {
+          type: Number,
+          notify: true
+        }
+      },
+
+      ready: function () {
+        this.push('msg', {'title': 'Notifications', 'content': 'Lorem ipsum.'});
+      },
+
+      attached: function(){
+        var whisperer = document.querySelector("#whisper");
+        this.wallet = document.querySelector("web3-wallet");
+        console.log(whisperer);
+        var self = this;
+        whisperer.addEventListener('message-received', function(e){
+          self.handlewhispermessage(e.detail);
+        });
+      },
+
+      _msg: function(){
+        this.msglength = this.msg.length;
+        this.msglength++;
+      },
+
+      handlewhispermessage: function(m) {
+        var self = this;
+        var message = JSON.parse(m.message);
+        var whisper = document.querySelector('#whisper');
+        var myaccount = app.helpers.fixaddress(self.wallet.account);
+        switch (message.command) {
+          case 'requestpubkeyforclub':
+            whisper.whisperpost(m.from, JSON.stringify({
+              'command': 'pubkeyforclub',
+              'pubkey': myaccount
+            }));
+            break;
+          case 'addclub':
+              console.log('im about to add this club to your data', message.data);
+              var newclubdata = JSON.parse(message.data);
+              var lsapi = document.querySelector("#lsapi");
+              lsapi.data.collection[newclubdata.key] = newclubdata;
+              lsapi.writeData();
+              // whisper.whisperpost(m.from, JSON.stringify({
+              //   'command': 'pubkeyforclub',
+              //   'pubkey': myaccount
+              // }));
+              break;
+
+          default:
+            console.log('unknown message', message);
+        }
+      },
+
+      toHome: function() {
+        this.fire('to-home');
+      }
+
+    });
+  })();
+  </script>
+</dom-module>

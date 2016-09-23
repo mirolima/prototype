@@ -1,57 +1,35 @@
-
-#Here you'll find the source code for the Arcade City front end app.
-
-
-## compiling and deploying the Ethereum DAPP
-### Prerequisites
-#### create a wallet
-- Make a lightwallet wallet with some ether on it - copy it to scripts/wallet.json
-
-``cd truffle``
-
-``node scripts/makewallet.js``
-
-This script will output the first account in your wallet - together with it's private key:
-
-``Your main account is  e3b29238498e55dc5723fd43912036c5293bdef9``
-``your PK =  <you PK will appear here>``
+## Locals
+###What is Locals?
+Locals is the tool belt to interact with, create and sustain a local community. It’s a decentralised app, running on the Ethereum blockchain and IPFS (the Inter-Planetary File System). Going from hierarchical to decentralised systems, Locals wants to be the solution for local organisations and governments. Using Locals, a community can operate autonomously, on a fair basis, where every entity has the same opportunities and rights.
+![](https://raw.githubusercontent.com/locals-world/locals-project/master/promo-images/decentralised-locals.png)
 
 
-You can use that PK to start testrpc with that account filled with ether to perform your tests.
-After that you can migrate to the morden testnet using the same wallet.
-Get some ether on your account by visiting out testnet faucet
-http://faucet.ma.cx:3000/ and put some ether for your transactions.
+###Smart contracts, simple interface.
+Locals aims to bring decentralised technology to a mainstream audience by using an inuitive user interface and colourful visual style. Without having any knowledge of blockchain technology, Locals’ users can easily interact with smart contracts on the Ethereum blockchain.
+![](https://raw.githubusercontent.com/locals-world/locals-project/master/promo-images/smartcontracts-locals.png)
 
-## Build the contracts
+
+#Getting started
+
+## Truffle 
+### Deploying the contracts
+
+Make sure to install the latest dev snapshot of truffle 
+
+``sudo npm install -g https://github.com/ConsenSys/truffle``
 
 ``cd truffle``
+
+Now check your truffle.js + the host to see if you are on the testnet or the mainnet or testrpc
+(You also will need the wallet.json that will be used to create the contracts. This wallet's first account needs the neccesary GAS to complete the transactions )
 
 ``truffle compile``
 
-``truffle migrate``
+``truffle migrate`` ( or ``truffle migate --reset`` if you want to start over)
 
-## copy the DAPP contracts to the web frontend
+### minting tokens
+(You will need the wallet.json that will be used to create the contracts. This wallet's first account needs the neccesary GAS to complete the transactions )
 
-`` cd truffle``
+`` truffle exec ./scripts/mint.js <0x___destination_account__> <amount of tokens>``
 
-``node ./scripts/copycontracts.js`` will extract the bytecode/abi/address in a JSON file and copy it to the polymer app/contracts folder. The frontend will pick it up from there.
-
-## Installing the front-end webapp
-
-The frontend app is a Polymer web-app. After you have compiled and deployed the DAPP contracts, you can try running the app itself.
-
-``npm install``
-
-``bower install``
-
-``gulp serve``
-
-## Minting tokens
-
-``cd truffle``
-``node ./scripts/mint.js getlc "e3b29238498e55dc5723fd43912036c5293bdef9" 100``
-
-will mint 1 token to your account. Your token balance will appear in the app after the next mined block.
-
-Make sure your account also had some ether to perform your transactions ( again : use our testnet faucet )
 

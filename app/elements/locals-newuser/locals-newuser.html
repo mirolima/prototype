@@ -1,0 +1,427 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/locals-input/locals-input.html">
+<link rel="import" href="../../bower_components/locals-style/locals-style.html">
+<link rel="import" href="../../bower_components/locals-button/locals-button.html">
+<link rel="import" href="../locals-backup/locals-backup.html">
+<script type="text/javascript" src="../../bower_components/cryptojslib/rollups/aes.js"></script>
+
+
+<dom-module id="locals-newuser">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .total {
+        width: 100vw;
+        height: 100vh;
+        box-sizing: border-box;
+        padding: 10vw;
+        margin: 0px;
+        background-color: white;
+      }
+
+      .horiz {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+
+      .vertic {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+      }
+
+      .blueback {
+        background-color: var(--locals-blue);
+      }
+
+     h1 {
+       @apply(--locals-font-h1);
+       text-align: center;
+       white-space: normal;
+       line-height: 48px;
+      }
+      h2 {
+       @apply(--locals-font-h2);
+      }
+      h3 {
+       @apply(--locals-font-h3);
+      }
+      h4 {
+       @apply(--locals-font-h4);
+      }
+      p {
+       @apply(--locals-font-body1);
+      }
+      small {
+       @apply(--locals-font-small);
+      }
+
+      .maintitle h5 {
+      @apply(--opensans-light);
+      color: var(--locals-darkgrey);
+      -webkit-margin-before:0px;
+      -webkit-margin-after:0px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 0px 20px 0px 20px;
+      padding: 0px;
+      font-size: 70px;
+      line-height: 126px;
+/*      animation: titleglow 25s linear 10s infinite;*/
+      }
+
+      @-webkit-keyframes titleglow {
+        0% {
+          opacity: 1;
+          }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @-moz-keyframes titleglow {
+        0% {
+          opacity: 1;
+          }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes titleglow {
+        0% {
+          opacity: 1;
+          }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+    .intro {
+      width: 90%;
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      @apply(--layout-wrap);
+      box-sizing: border-box;
+    }
+
+    .syncuser {
+      width: 300px;
+      margin-top:20px;
+      border-top: 2px dotted rgba(0,0,0,0.10);
+      border-right: none;
+      border-left: none;
+      border-bottom: none;
+      @apply(--layout-vertical);
+      @apply(--layout-start);
+      box-sizing: border-box;
+      padding-top: 5px;
+      color: rgba(255,255,255,0.70);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .syncuser h3 {
+      font-size: 16px;
+      @apply(--opensans-light);
+    }
+
+    .whitespace {
+      height: 20px;
+    }
+
+    locals-input {
+      width: 100%;
+      max-width: 500px;
+    }
+
+
+
+  /* phone */
+  @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {
+
+    .maintitle h5 {
+    -webkit-margin-before:20px;
+    -webkit-margin-after:0px;
+    -webkit-margin-start:10em;
+    -webkit-margin-end:0em;
+    margin: 20px 0px 10px 0px;
+    padding: 0px;
+    width: 100%;
+    text-align: center;
+    font-size: 50px;
+    line-height: 56px;
+    }
+
+
+      .intro {
+      padding-bottom:30px;
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+
+      }
+    .syncuser {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      margin-top:50px;
+      box-sizing: border-box;
+      padding-top: 10px;
+    }
+
+  .maintitle {
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+    }
+
+  }
+
+  /* between phone and desktop */
+
+  @media all and (min-width: 401px) and (max-width: 950px) {
+
+      .intro {
+      padding-bottom:30px;
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+
+      }
+    .syncuser {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      margin-top:50px;
+      box-sizing: border-box;
+      padding: 10px 20px 20px 20px;
+      width: 100%;
+    }
+
+  .maintitle {
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+    }
+
+}
+
+  /* desktop-large */
+  @media all and (min-width: 951px) and (max-width: 1600px) {
+    .maintitle h5 {
+    -webkit-margin-before:0px;
+    -webkit-margin-after:0px;
+    -webkit-margin-start:0em;
+    -webkit-margin-end:0em;
+    margin: 0px 60px 0px 0px;
+    padding: 0px;
+    font-size: 90px;
+    line-height: 106px;
+    }
+
+    .intro {
+      @apply(--layout-vertical);
+      @apply(--layout-start);
+    }
+    .syncuser {
+      @apply(--layout-vertical);
+      @apply(--layout-start);
+    }
+
+
+  }
+  /* desktop-xlarge */
+  @media all and (min-width: 1601px) {
+    .maintitle h5 {
+      @apply(--opensans-light);
+
+    -webkit-margin-before:0px;
+    -webkit-margin-after:0px;
+    -webkit-margin-start:0em;
+    -webkit-margin-end:0em;
+    margin: 0px 0px 0px 0px;
+    padding: 0px;
+    font-size: 110px;
+    line-height: 116px;
+    }
+    .intro {
+      @apply(--layout-vertical);
+      @apply(--layout-start);
+    }
+    .syncuser {
+      @apply(--layout-vertical);
+      @apply(--layout-start);
+    }
+
+  }
+
+    </style>
+
+    <neon-animated-pages attr-for-selected="state" selected="{{state}}" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+      <neon-animatable state="0">
+
+       <iron-localstorage
+      id="localstorage"
+      name="lo-init"
+      value="{{loinit}}">
+
+    </iron-localstorage>
+
+    <iron-localstorage
+      id="localstorage_data"
+      name="lo-data" value="{{encdata}}" >
+    </iron-localstorage>
+
+    <div class="total blueback horiz">
+
+      <div class="intro">
+        <div class="maintitle">
+          <h5>Welcome</h5>
+        <div class="whitespace"></div>
+        <div class="whitespace"></div>
+
+        <locals-button object="locals-avatar" on-tap="newuser" startbtn xxl></locals-button>
+        </div>
+        <div class="whitespace"></div>
+
+    <!-- <div class="syncuser" on-tap="syncuser">
+    <h3>Een bestaande Local syncen</h3>
+    </div> -->
+    <div class="syncuser" on-tap="restore">
+    <h3>Restore backup</h3>
+    </div>
+    </div>
+
+    </div>
+    </neon-animatable>
+
+    <neon-animatable state="1">
+      <div class="total vertic">
+        <h1>Choose a password</h1>
+        <div class="whitespace"></div>
+        <locals-input label="Password" bind-value="{{password}}" type="password" center></locals-input>
+        <locals-input label="Password control" bind-value="{{password1}}" type="password" center></locals-input>
+        <div class="whitespace"></div>
+        <locals-button icon="v" on-tap="savepass" disabled="{{passcheck}}">Continue</locals-button>
+      </div>
+    </neon-animatable>
+
+    <neon-animatable state="2">
+      <h1>SYNC</h1>
+      <!-- hier dan sync element -->
+    </neon-animatable>
+
+      <neon-animatable state="3">
+        <locals-backup></locals-backup>
+        <!-- hier dan sync element -->
+      </neon-animatable>
+
+    </neon-animated-pages>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'locals-newuser',
+
+      properties: {
+        password: {
+          type: String,
+          value: '',
+          notify: true,
+          observer: '_passwordcheck'
+        },
+        password1: {
+          type: String,
+          value: '',
+          notify: true,
+          observer: '_passwordcheck'
+        },
+        passcheck: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      ready: function(){
+        this.state = 0;
+      },
+
+      newuser: function(){
+        this.state = 1;
+      },
+
+      restore: function(){
+        this.state = 3;
+      },
+
+    savepass: function() {
+      sessionStorage.setItem("lopassword", this.password);
+
+      this.data = {
+        collection: {
+        },
+        peers: [],
+        godfather: [],
+        lastupdate: Date.now()
+      };
+      this.writeData();
+    },
+
+    writeData: function() {
+      //debugger;
+      if (this.password) {
+        //this.log('Localstorage API write: ', this.data);
+        var object = this.data;
+        var stringifiedobject = JSON.stringify(object);
+        //this.log(stringifiedobject);
+        var encrypted = CryptoJS.AES.encrypt(stringifiedobject, this.password);
+        //this.log('Localstorage API encrypted: ', encrypted.toString());
+        this.encdata = encrypted.toString();
+        //this.readData(true);
+        this.restart();
+      }
+    },
+
+    syncuser: function() {
+
+      },
+
+      restart: function(){
+//        Excess.RouteManager.transitionTo('/home');
+        window.location = '/#/home';
+        location.reload();
+
+      },
+
+      _passwordcheck: function(){
+        if(this.password && this.password===this.password1){
+          this.passcheck = false;
+          this.loinit = 1;
+        }
+      }
+    });
+  })();
+  </script>
+</dom-module>

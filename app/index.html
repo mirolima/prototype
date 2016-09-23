@@ -9,26 +9,24 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<html lang="en">
+<html lang="">
 
 <head>
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <meta name="generator" content="Locals-Mapp">
-  <title>Locals-Mapp</title>
-
+  <meta name="generator" content="Arcade.City" />
+  <title>Arcade.City</title>
   <!-- Place favicon.ico in the `app/` directory -->
 
   <!-- Chrome for Android theme color -->
-  <meta name="theme-color" content="#2E3AA1">
+  <meta name="theme-color" content="#C5CAE9">
 
   <!-- Web Application Manifest -->
   <link rel="manifest" href="manifest.json">
 
   <!-- Tile color for Win8 -->
-  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-TileColor" content="#C5CAE9">
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -38,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Locals-Mapp">
+  <meta name="apple-mobile-web-app-title" content="Arcade.City">
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
   <!-- Tile icon for Win8 (144x144) -->
@@ -52,213 +50,72 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
+  <script src="bower_components/node-uuid/uuid.js"></script>
 
-
-
-  <!-- Because this project uses vulcanize this should be your only html import
-       in this file. All other imports should go in elements.html -->
+  <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
+  <!-- endreplace-->
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
+
 </head>
 
-<body unresolved>
+<body unresolved class="fullbleed layout vertical">
+
   <span id="browser-sync-binding"></span>
+
   <template is="dom-bind" id="app">
 
-    <iron-meta
-      key="ipfs_read"
-      value="/ip4/109.123.70.141/tcp/8080"></iron-meta>
+    <iron-localstorage
+      id="localstorage"
+      name="lo-init"
+      on-iron-localstorage-load-empty="generate"
+      on-iron-localstorage-load="homestate">
+    </iron-localstorage>
 
-  <web3-wallet
-      id="web3wallet"
-      walletname="locals-wallet"
-      account="{{account}}"
-      balance="{{balance}}"
-      keystore="{{keystore}}"
-      host="https://morden.infura.io/fNrdKYnEHWqldP4JnWZp"
-      web3="{{web3}}"
-      password="test"></web3-wallet>
+ <iron-meta
+      key="localstruthcontractaddress"
+      value="0x480B73b92124A3b7a17614cc62DF218606A60cD3"></iron-meta>
 
- <ipfs-upload
-      id="ipfsupload"
-      hash=""
-      on-ipfs-hash-received=""
-      on-upload-started=""
-      on-upload-error=""
-      host='{"host": "ipfs.infura.io", "port": "5001", "procotol": "https"}'
-      hidefileinput></ipfs-upload>
+ <iron-meta
+      key="localsstorecontractaddress"
+      value="0x57e164e3d46f909f8b07e072eec9c2d855b3eba9"></iron-meta>
 
-<localcoin-account web3="{{web3}}" account="{{account}}" localcoinbalance="{{localcoinbalance}}"></localcoin-account>
+ <iron-meta
+      key="localscointokencontractaddress"
+      value="0xf25d622f72da07c67148de72434ce448ed6be76f"></iron-meta>
 
-    <paper-drawer-panel id="paperDrawerPanel" force-narrow>
-      <!-- Drawer Scroll Header Panel -->
-      <div class="drawer" drawer fixed>
+<!-- <iron-meta
+      key="ethnode"
+      value="http://localhost:8545"></iron-meta> -->
 
-        <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar">
-          <span class="menu-name">#rideshare</span>
-        </paper-toolbar>
+      <iron-meta
+            key="ethnode"
+            value="http://faucet.ma.cx:8545"></iron-meta>
 
-        <div class="trending">
-          <h2>Trending</h2>
-          <p>
-            <b>#rideshare</b>
-          </p>
-          <p>
-            #delivery
-          </p>
-          <p>
-            #foodshare
-          </p>
-          <p>
-            #devwork
-          </p>
-          <p>
-            #household
-          </p>
-        </div>
-        <!-- Drawer Content -->
-        <paper-menu attr-for-selected="data-route" selected="[[route]]">
+      <iron-meta
+            key="ipfs_read"
+            value="/ip4/109.123.70.141/tcp/8080"></iron-meta>
 
-          <a data-route="home" href="{{baseUrl}}">
-            <iron-icon icon="home"></iron-icon>
-            <span>Map View</span>
-          </a>
+          <iron-meta
+            key="ipfs_upload"
+            value="/ip4/109.123.70.141/tcp/5001"></iron-meta>
 
-          <a data-route="users" href="{{baseUrl}}users">
-            <iron-icon icon="info"></iron-icon>
-            <span>Profile</span>
-          </a>
+          <iron-meta
+            key="ipfs_uploadhost"
+            value="http://109.123.70.141:5001"></iron-meta>
 
-          <a data-route="contact" href="{{baseUrl}}contact">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Settings</span>
-          </a>
-
-          <a data-route="contact" href="{{baseUrl}}backup">
-            <iron-icon icon="backup"></iron-icon>
-            <span>Backup</span>
-          </a>
-
-          <a data-route="contact" href="{{baseUrl}}contact">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Settings</span>
-          </a>
-
-          <p>{{account}}</p>
-          <p>{{balance}}</p>
-        </paper-menu>
-      </div>
-
-      <!-- Main Area -->
-      <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
-        <!-- <div id="mainToolbar" class="fixed"> -->
-        <div class="header">
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-             <div class="avatar" paper-drawer-toggle>
-               <img src="images/avatardefaults/locals-avatardefault_1.png">
-             </div>
-
-
-
-             <div class="balanceinfo">
-              <div class="balance">
-                <!-- <template is="dom-if" if="{{!balanceloaded}}">
-                  <locals-icon class="refresher" small icon="refresh1" iconcolor="grey5"></locals-icon>
-                </template>
-                <template is="dom-if" if="{{balanceloaded}}"> -->
-                  <h1>{{localcoinbalance}}</h1>
-                  <locals-icon class="localcoinamount" verysmall icon="localcoin" iconcolor="darkgrey"></locals-icon>
-                <!-- </template> -->
-              </div>
-            </div>
-
-          <div class="flex"></div>
-          <template is="dom-if" if="{{!up}}">
-            <locals-icon class="localcoinamount" icon="currentisup" on-tap="toggledownup"></locals-icon>
-          </template>
-          <template is="dom-if" if="{{up}}">
-            <locals-icon class="localcoinamount" icon="currentisdown" on-tap="toggledownup"></locals-icon>
-          </template>
-          <div class="invisible"></div>
-          <!-- <div class="selectoricon"><img src="images/prototypequick/ups-selected.png"></div>
-          <div class="selectoricon"><img src="images/prototypequick/downs-notselected.png"></div> -->
-        </div>
-
-        <!-- Main Content -->
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-            <section data-route="home">
-                <map-view id="mapview"></map-view>
-            </section>
-
-            <section data-route="users">
-              <paper-material elevation="1">
-                <h2 class="page-title">Users</h2>
-                <p>This is the users section</p>
-                <a href$="{{baseUrl}}users/Addy">Addy</a><br>
-                <a href$="{{baseUrl}}users/Rob">Rob</a><br>
-                <a href$="{{baseUrl}}users/Chuck">Chuck</a><br>
-                <a href$="{{baseUrl}}users/Sam">Sam</a>
-              </paper-material>
-            </section>
-
-            <section data-route="offer">
-                <paper-icon-button icon="close" on-tap="home"></paper-icon-button>
-                <view-offer offerid="{{params.offerid}}"></view-offer>
-            </section>
-
-            <section data-route="backup">
-                <paper-icon-button icon="close" on-tap="home"></paper-icon-button>
-                <locals-backup></locals-backup>
-            </section>
-
-            <section data-route="newoffer">
-                <locals-button icon="decline" on-tap="home" verysmall bgrgba="0,0,0,0"></locals-button>
-                <new-offer account="{{account}}"></new-offer>
-            </section>
-
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="page-title">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
-            </section>
-          </iron-pages>
-        </div>
-      </paper-scroll-header-panel>
-    </paper-drawer-panel>
-
-    <paper-toast id="toast">
-      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
-    </paper-toast>
-
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
-    <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
-
-    <platinum-sw-register auto-register
-                          clients-claim
-                          skip-waiting
-                          base-uri="bower_components/platinum-sw/bootstrap"
-                          on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="fastest"
-                         cache-config-file="cache-config.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
-    -->
+          <iron-meta
+            key="ipfs_url"
+            value="http://109.123.70.141:8080/ipfs/"></iron-meta>
 
   </template>
 
   <!-- build:js scripts/app.js -->
   <script src="scripts/app.js"></script>
   <script src="scripts/helpers.js"></script>
-  <script src="bower_components/geohash/geohash.js"></script>
+
   <!-- endbuild-->
 </body>
 
