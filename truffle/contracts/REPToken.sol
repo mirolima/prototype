@@ -36,6 +36,10 @@ contract REPToken is owned {
         whitelist[_whitelistaddr] = true;
     }
 
+    function removeFromWhitelist(address _whitelistaddr) onlyOwner {
+        whitelist[_whitelistaddr] = false;
+    }
+
     /* This unnamed function is called whenever someone tries to send ether to it */
     function () {
         throw;     // Prevents accidental sending of ether

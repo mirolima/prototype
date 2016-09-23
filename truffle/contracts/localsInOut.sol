@@ -104,7 +104,7 @@ contract localsInOut is owned {
 
   function mintRep(address _to,uint256 _value){
       var REPTokencontract = REPToken(REPcontract);
-      REPTokencontract.mintToken(_to,_value);
+      REPTokencontract.mintToken(_to,1);
   }
 
 
