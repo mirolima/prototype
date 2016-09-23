@@ -1,0 +1,174 @@
+<!--
+  This little teenieweenie awesome polymer component lets you read and write data from and to localstorage, encrypted (salted) with a privatekey or password.
+
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-localstorage/iron-localstorage.html">
+
+<!--
+
+Example:
+
+    <locals-lsapi privatekey="password" data="{{data}}" encdata="{{encdata}}"></locals-lsapi>
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="locals-lsapi">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+
+    <iron-localstorage 
+      id="localstorage" 
+      name="lo-data" value="{{encdata}}" 
+      on-iron-localstorage-load-empty="initEmpty"
+      on-iron-localstorage-load="readData">
+    </iron-localstorage>
+
+  </template>
+</dom-module>
+<script>
+(function() {
+
+  // Declaring some variables to be filled with a value later on.
+
+  window.addEventListener('WebComponentsReady', function() {
+      // imports are loaded and elements have been registered
+      // Setting up stage so we can reference to it.
+  });
+
+  Polymer({
+    is: 'locals-lsapi',
+
+    properties: {
+
+      verbose: {
+        type: Boolean
+      },
+
+      data: {
+        type: Object,
+        notify: true,
+        observer: "_dataChanged",
+      },
+
+      privatekey: {
+        type: String,
+        observer: "_privatekey"
+      },
+
+      encdata: {
+        type: String,
+        notify: true,
+        observer: "_encdataChanged"
+      }
+    },
+
+    ready: function(){
+      this.log('were ready with lsapi');
+    },
+
+    log: function(e){
+      if(this.verbose){
+        console.log(e);
+      }
+    },
+
+    _privatekey: function(){
+      this.readData();
+      //console.log(this.privatekey);
+    },
+
+    _publickey: function(){
+      //console.log(this.publickey);
+    },
+
+    initEmpty: function(){
+      // this.log("Init activated");
+      // // lomqtt.subscribe('userobject/'+this.publickey, 2, function(e){
+      // //   this.log("Init data: ",e);
+      // // });
+      // var data = { 
+      //   collection: { 
+      //     localsavatar: {
+      //       "component": {
+      //         "name": "locals-avatar",
+      //         "contract": "0x000"
+      //       },
+      //       "data":{
+      //         "firstname":"Voornaam",
+      //         "lastname":"Achternaam",
+      //         "birthplace":"Antwerpen",
+      //         "birthdate":"01/01/1999"},
+      //       "config":
+      //         [[0,0],[0,0],[0,0],[0,"5"],[0,0],[0,0],[0,0],[0,0],[0,0]]} 
+      //       }, 
+      //     peers: [], 
+      //     godfather: [], 
+      //     lastupdate: Date.now() 
+      //   };
+      // this.data = data;
+      // //this.fire('init-data');
+      // this.writeData();
+      // //data written
+    },
+
+    writeData: function(){
+        //this.log("Pincode:", this.privatekey);
+        if (this.privatekey){
+        var privatekey = this.privatekey;
+        this.log('Localstorage API write: ', this.data);
+        var object = this.data;
+        var stringifiedobject = JSON.stringify(object);
+        this.log(stringifiedobject);
+        var encrypted = CryptoJS.AES.encrypt(stringifiedobject, privatekey);
+        this.log('Localstorage API encrypted: ',encrypted.toString());
+        this.encdata = encrypted.toString();
+        this.readData(true);
+
+        }
+    },
+
+    readData: function(nofire){
+      if(!this.encdata || this.privatekey === undefined){
+        //this.initEmpty();
+      } else {
+        var privatekey = this.privatekey;
+       
+        try{
+          var decrypted = CryptoJS.AES.decrypt(this.encdata, privatekey);          
+          var decrtostring = decrypted.toString(CryptoJS.enc.Utf8);
+          var data = JSON.parse(decrtostring, function(k, v) {
+            return v;       // return the unchanged property value.
+          });
+          this.data = data;
+          this.log(JSON.stringify(data));
+          console.log('password correct');
+          if (!nofire) this.fire('correct-password');
+        }catch(e){
+          // If we arrive here - the password was wrong....
+          console.log('password wrong');
+          if (!nofire) this.fire('wrong-password');
+        }
+      };
+    },
+
+    _encdataChanged: function(){
+      this.readData();
+    },
+
+    _dataChanged: function(){
+      this.fire("data-changed");
+    },
+
+    attached: function(){
+      this.privatekey = sessionStorage.getItem("lopassword");
+    }
+  });
+})();
+</script>
+<script src="crypto-aes.js"></script>

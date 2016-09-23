@@ -1,0 +1,154 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../neon-animation/neon-animation.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-object></locals-object>
+Example:
+<locals-object>
+<h2>Hello locals-object</h2>
+</locals-object>
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="locals-objectlayer">
+<template>
+  <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      neon-animated-pages {
+        height: 100%;
+      }
+
+      img {
+        height: 100%;
+      }
+
+    </style>
+
+  <template is="dom-if" if="{{!editmode}}">
+    <img src="{{getTile(images,selected)}}"></template>
+
+  <template is="dom-if" if="{{editmode}}">
+    <neon-animated-pages selected="{{selected}}" entry-animation="{{inanimation}}" exit-animation="{{outanimation}}">
+      <template is="dom-repeat" items="{{images}}">
+        <neon-animatable>
+          <img src="{{item}}"></neon-animatable>
+      </template>
+    </neon-animated-pages>
+  </template>
+</template>
+
+<script>
+    Polymer({
+      is: 'locals-objectlayer',
+
+      properties: {
+        images: {
+          type: Array
+        },
+        selected: {
+          type: Number
+        },
+
+        editmode: {
+          type: Boolean,
+          value: false
+        },
+
+        inanimation: {
+          type: String,
+          value: 'slide-from-left-animation',
+          observer: '_inanimation'
+        },
+
+        outanimation: {
+          type: String,
+          value: 'slide-right-animation',
+          observer: '_outanimation'
+
+        },
+
+
+      },
+
+      _eq : function(a,b){
+        return a==b;
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+
+
+        // var self = this;
+        // setInterval(function(){
+        //   self.selected++;
+        //   console.log('length=',Object.keys(self.options).length);
+        //   if (self.selected >= Object.keys(self.options).length){
+        //     self.selected = 0;
+        //   }
+        // },1000)
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      getTile: function(images,selected){
+        if (!images){
+          return;
+        }
+        try{
+          return images[selected];
+        }catch(e){
+          // we will only arrive here if the config was incorrect/inconsistent
+          return;
+        }
+
+        
+      },
+
+      _inanimation: function(){
+      },
+
+      _outanimation: function(){
+      },
+    
+    });
+  </script>
+</dom-module>

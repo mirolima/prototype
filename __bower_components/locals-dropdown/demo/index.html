@@ -1,0 +1,53 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>locals-dropdown Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../locals-dropdown.html">
+    <link rel="import" href="../../locals-menu/locals-menu.html">
+    <link rel="import" href="../../locals-item/locals-item.html">
+    <link rel="import" href="../../iron-selector/iron-selector.html">
+
+
+  </head>
+  <body unresolved>
+    <locals-dropdown attrselected="key" selecteditem="Optie 1">
+      <locals-item key="Optie 1">Optie 1</locals-item>
+      <locals-item key="Optie 2">Optie 2</locals-item>
+      <locals-item key="Optie 3">Optie 3</locals-item>
+      <locals-item key="Optie 4">Optie 4</locals-item>
+      <locals-item key="Optie 5">Optie 5</locals-item>
+      <locals-item key="Optie 6">Optie 6</locals-item>
+    </locals-dropdown>
+    <script>
+      // var app = document.querySelector('#app');
+      // console.log(app);
+      // app.selecteditem = "Ben";
+
+      // document.querySelector('#saybtn').addEventListener('click', function() {
+      //   alert(seedElement.sayHello('Hallo!'));
+      // });
+
+      // document.querySelector('#laserbtn').addEventListener('click', function() {
+      //   seedElement.fireLasers();
+      // });
+
+      // document.addEventListener("locals-dropdown-lasers", function(e) {
+      //   console.log(e.detail.sound);
+      // });
+
+    </script>
+
+  </body>
+</html>

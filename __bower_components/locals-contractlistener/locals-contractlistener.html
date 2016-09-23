@@ -1,0 +1,288 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../locals-loader/locals-loader.html">
+
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+<!--
+An element listening to the state of transaction hashes or activity on a contract address
+Simple example: listen to a certain TXhash
+Updates 'state' ('txstarted','txmined','txexired')
+
+
+    <locals-contractlistener
+      web3="{{web3}}"
+      txhash="{{transactionhash}}" state="{{state}}"></locals-contractlistener>
+
+Example: listen to a contract-address and get event details
+
+    <locals-contractlistener
+      web3="{{web3}}"
+      contractaddress="{{address}}" on-filter-match="contractEvent"></locals-contractlistener>
+
+contractEvent: function(e) e.detail will have the format:`
+
+```
+{
+  result: 
+  {
+    "address": "0xf37626aa99f29a4afe7406e386f68cc77be2cb6e",
+    "blockHash": "0x9daf95723b4cff6440673213d22eae95d12b19a89c3b051298d8c7adf7ab96f6",
+    "blockNumber": 909658,
+    "data": "0x000000000000000000000000000000000000000000000000ffdab0149e804000ffffffffffffffffffffffffffffffffffffffffffffffff1c0ed015351625f10000000000000000000000000000000000000000000000640000000000000000",
+    "logIndex": 0,
+    "topics": ["0x53fd41308e1172ecd43fd78ca7ba8b39bd0000bcc7cb3fb0af3b2ba7645d8f13", "0x000000000000000000000000ec805db17a7b76a47088e8ab4e18c4b531a67b89", "0x15852d4126acece333636cf37a9c241cf49d0458683995f99f4df2d002b4ab5e", "0x0000000000000000000000000000000000000000000000000000000000000001"],
+    "transactionHash": "0xec8b992fdf801a1245f99c3a77271211547446b827c79fac61832d3427d88e5b",
+    "transactionIndex": 0
+  }
+}
+````
+
+or in case of an error:
+
+```
+{
+  error: 'description of error'
+}
+```
+
+
+You need to provide a web3-wallet component to this component. See an example on how to do this in the demo.
+This component uses web3.js - so you will need access to an Ethereum node before you can start running queries.
+
+@demo demo/index.html
+-->
+<dom-module id="locals-contractlistener">
+<template>
+
+  <style>
+      :host {
+        display: block;
+      }
+
+      h1 {
+        @apply(--locals-font-h1);
+      }
+
+      h3 {
+        @apply(--locals-font-h3);
+      }      
+
+      p {
+        @apply(--locals-font-body1);
+      }
+
+      .bold {
+        @apply(--opensans-reg);
+      }
+
+      .blue {
+        color:var(--locals-blue);
+      }
+
+      .msg {
+        width: 100%
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      locals-icon {
+        margin-left: 8px;
+      }
+
+
+  </style>
+
+    <template is="dom-if" if="{{_isstate(state,'init')}}">
+      <locals-loader small>Initialising</locals-loader>
+    </template>
+    <template is="dom-if" if="{{_isstate(state,'txstarted')}}">
+      <div class="msg">
+        <p>Received transaction hash</p>
+        <locals-icon small icon="v" iconcolor="darkgrey"></locals-icon>
+      </div>
+      <locals-loader small>Mining transaction hash</locals-loader>
+    </template>
+    <template is="dom-if" if="{{_isstate(state,'txexpired')}}">
+      <p>tx expired !!!</p>
+  </template>
+  <template is="dom-if" if="{{_isstate(state,'txmined')}}">
+    <div class="msg">
+      <p>Initialised, received transaction hash</p>
+      <locals-icon small icon="v" iconcolor="darkgrey"></locals-icon>
+    </div>
+    <div class="msg">
+      <p>Transaction hash mined</p>
+      <locals-icon small icon="v" iconcolor="darkgrey"></locals-icon>
+    </div>
+    <h3>{{succes}}</h3>
+  </template>
+
+</template>
+<script>
+    Polymer({
+      is: 'locals-contractlistener',
+
+      properties: {
+        /**
+         * the `web3-wallet` instance to use.
+         */
+        web3: {
+          type: Object,
+          observer: '_web3observer'
+        },
+        /*
+         * the current state the component is in
+         */
+        state: {
+          type: String
+        },
+        /**
+         * The transactionhash to listen to object can be either a string or an object.
+         **/
+        txhash: {
+          type: String,
+          observer: '_txhashobserver'
+        },
+
+        contractaddress: {
+          type: String,
+          observer: '_contractaddressobserver'
+        },
+
+        _filterattached: {
+          type: Boolean,
+          notify: true
+        },
+
+        succes: {
+          type: String,
+          value: 'Done!'
+        }
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+        // attached to web3JS ?
+        this._filterattached = false;
+      },
+
+      _isstate: function(variable, value) {
+        return (variable == value);
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+        this._txhashobserver();
+        this._contractaddressobserver();
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+        this._destroytxhashfilter();
+        this._destroycontractaddressfilter();
+      },
+
+      _destroytxhashfilter: function() {
+        if (this.filterInstance && !this.nowatch) {
+          this.filterInstance.stopWatching();
+          delete this.filterInstance;
+        }
+      },
+
+      _destroycontractaddressfilter: function() {
+        if (this.cafilter) {
+          this.cafilter.stopWatching();
+          delete this.cafilter;
+        }
+      },
+
+      _web3observer: function() {
+        if (!this._filterattached) {
+          this._txhashobserver();
+        }
+        if (!this.cafilter){
+          this._contractaddressobserver();
+        }
+      },
+
+      _contractaddressobserver: function() {
+        var self = this;
+        if (!this.cafilter && this.web3 && this.contractaddress) {
+
+          if (this.cafilter) {
+            this.cafilter.stopWatching();
+          }
+          this.cafilter = this.web3.eth.filter({
+            fromBlock: 'latest',
+            to: this.contractaddress
+          });
+          this.cafilter.watch(function(error, result) {
+            self.fire('filter-match', {
+              error: error,
+              result: result
+            });
+          });
+        }
+      },
+
+      _txhashobserver: function() {
+        var self = this;
+        if (this._filterattached) {
+          this._destroytxhashfilter();
+        }
+        if (!this._filterattached && this.web3 && this.txhash) {
+          this.state = 'txstarted'
+
+
+          /*
+           * Watch for a particular transaction hash and call the awaiting function when done;
+           * Ether-pudding uses another method, with web3.eth.getTransaction(...) and checking the txHash;
+           * on https://github.com/ConsenSys/ether-pudding/blob/master/index.js
+           */
+          var blockCounter = 15;
+          // Wait for tx to be finished
+          var filter = this.web3.eth.filter('latest').watch(function(err, blockHash) {
+            if (blockCounter <= 0) {
+              filter.stopWatching();
+              filter = null;
+
+              self.state = 'expired';
+              return;
+            }
+            // Get info about latest Ethereum block
+            var block = self.web3.eth.getBlock(blockHash);
+            --blockCounter;
+            // Found tx hash?
+            if (block.transactions.indexOf(self.txhash) > -1) {
+              // Tx is finished
+              filter.stopWatching();
+              filter = null;
+              self.state = 'txmined';
+              // Tx hash not found yet?
+            } else {
+              self.fire('waiting');
+            }
+          });
+        };
+      }
+    });
+  </script>
+</dom-module>

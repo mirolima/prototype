@@ -1,0 +1,226 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-button/locals-button.html">
+<link rel="import" href="../locals-style/locals-style.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-confirm></locals-confirm>
+
+Example:
+
+    <locals-confirm>
+      <h2>Hello locals-confirm</h2>
+    </locals-confirm>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-confirm">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      h1 {
+      @apply(--opensans-light);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 40px;
+      line-height: 52px;
+      }
+
+      p {
+      @apply(--opensans-light);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 24px;
+      -webkit-margin-before:0px;
+      -webkit-margin-after:0px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 0px;        
+      }
+
+      .confirmbtns {
+        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        margin-top: 10px;
+      }
+
+      .confirmbtns locals-button {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .smallhorizontal {
+
+      }
+
+    </style>
+
+
+    <template is="dom-if" if="{{small}}">
+    <p><content></content></p>
+      <div class="confirmbtns">
+        <locals-button icon="declinenew" on-tap="cancel" confirmsmall></locals-button>
+        <locals-button txtcolor="red" icon="v" on-tap="confirm"></locals-button>
+      </div>
+    </template>
+
+
+    <template is="dom-if" if="{{normal}}">
+    <h1><content></content></h1>
+      <div class="confirmbtns">
+        <locals-button icon="declinenew" on-tap="cancel" small></locals-button>
+        <locals-button txtcolor="green" icon="v" on-tap="confirm" small></locals-button>
+      </div>
+    </template>
+
+    <template is="dom-if" if="{{blue}}">
+    <h1><content></content></h1>
+      <div class="confirmbtns">
+        <locals-button icon="declinenew" on-tap="cancel" small></locals-button>
+        <locals-button txtcolor="blue" icon="v" on-tap="confirm" small></locals-button>
+      </div>
+    </template>
+
+
+    <template is="dom-if" if="{{formsubmit}}">
+      <div class="confirmbtns">
+        <locals-button icon="declinenew" on-tap="cancel" small></locals-button>
+        <locals-button submit="true" txtcolor="green" small></locals-button>
+      </div>
+    </template>
+
+    <template is="dom-if" if="{{next}}">
+      <div class="confirmbtns">
+        <locals-button icon="declinenew" on-tap="cancel" small></locals-button>
+        <locals-button icon="arrowrightfat" on-tap="confirm" small></locals-button>
+      </div>
+    </template>
+
+    <template is="dom-if" if="{{smallhorizontal}}">
+      <div class="confirmbtns">
+        <p><content></content></p>
+        <locals-button icon="declinenew" on-tap="cancel" small></locals-button>
+        <locals-button txtcolor="green" icon="v" on-tap="confirm" small></locals-button>
+      </div>
+    </template>
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-confirm',
+
+      properties: {
+
+      small: {
+        type: Boolean,
+        value: false
+      },
+
+      formsubmit: {
+        type: Boolean,
+        value: false
+      },
+
+      next: {
+        type: Boolean,
+        value: false
+      },
+
+      blue: {
+        type: Boolean,
+        value: false
+      },
+
+      normal: {
+        type: Boolean,
+        value: false
+      },
+
+      smallhorizontal: {
+        type: Boolean,
+        value: false
+      },
+
+      type: {
+        type: String,
+        value: false,
+        observer: "_type"
+      }
+
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+      },
+
+      attached: function() {
+      },
+
+      detached: function() {
+      },
+
+      cancel: function(){
+        this.fire('cancel');
+      },
+      
+      confirm: function(){
+        this.fire('confirm');
+      },
+
+      _type: function(){
+        switch(this.type) {
+            case 'small':
+              this.small = true;
+              this.normal = false;
+            break;
+            case 'formsubmit':
+              this.formsubmit = true;
+              this.normal = false;
+            break;
+            case 'next':
+              this.next = true;
+              this.normal = false;
+            break;
+            case 'blue':
+              this.blue = true;
+              this.normal = false;
+            break;
+            case 'smallhorizontal':
+              this.smallhorizontal = true;
+              this.normal = false;
+            break;
+            default:
+              this.normal = true;
+        }
+      },
+
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,14 @@
+{
+  "name": "js-ipfs-api",
+  "homepage": "https://github.com/ipfs/js-ipfs-api",
+  "version": "2.13.2",
+  "_release": "2.13.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.13.2",
+    "commit": "205858bfed1a66701ca7f4375b54e4e73951e334"
+  },
+  "_source": "https://github.com/ipfs/js-ipfs-api.git",
+  "_target": "^2.13.2",
+  "_originalSource": "https://github.com/ipfs/js-ipfs-api.git"
+}

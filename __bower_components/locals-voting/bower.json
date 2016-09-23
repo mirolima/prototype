@@ -1,0 +1,43 @@
+{
+  "name": "locals-voting",
+  "version": "1.0.3",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-voting.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "paper-input": "^1.1.11",
+    "locals-item": "https://github.com/locals-world/locals-item.git",
+    "locals-button": "https://github.com/locals-world/locals-button.git",
+    "iron-pages": "^1.0.7",
+    "locals-proposal": "https://github.com/locals-world/locals-proposal.git",
+    "web3-wallet": "^0.0.8",
+    "neon-animation": "^1.2.1",
+    "iron-collapse": "^1.0.8",
+    "pikaday": "^1.4.0",
+    "locals-progress": "https://github.com/locals-world/locals-progress.git",
+    "underscore": "^1.8.3",
+    "locals-dropdown": "https://github.com/locals-world/locals-dropdown.git"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  },
+  "resolutions": {
+    "moment": "^2.13.0",
+    "web3-wallet": "^0.0.8"
+  }
+}

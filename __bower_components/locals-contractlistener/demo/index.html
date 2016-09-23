@@ -1,0 +1,72 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>locals-contractlistener Demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+  <link rel="import" href="../locals-contractlistener.html">
+  <link rel="import" href="../../web3-wallet/web3-wallet.html"></head>
+  <link rel="import" href="../../locals-style/locals-style.html"></head>
+  <link rel="import" href="../../locals-item/locals-item.html"></head>
+  <link rel="import" href="../../paper-input/paper-input.html"></head>
+  <link rel="import" href="../../paper-button/paper-button.html"></head>
+<body unresolved>
+
+  <template is="dom-bind" id="app">
+
+    <web3-wallet id="web3wallet" password="test" web3="{{web3}}" host="{{host}}" account={{account}} keystore="{{keystore}}" balance="{{balance}}"></web3-wallet>
+
+    <div class="localscanvas">
+      <div class="localstypo">
+
+        <h1>Transaction hash listener</h1>
+        <h2>init</h2>
+        <locals-contractlistener state="init" web3="{{web3}}"></locals-contractlistener>
+        <h2>txstarted</h2>
+        <locals-contractlistener state="txstarted" web3="{{web3}}"></locals-contractlistener>
+        <h2>txexpired</h2>
+        <locals-contractlistener state="txexpired" web3="{{web3}}"></locals-contractlistener>
+        <h2>txmined</h2>
+        <locals-contractlistener state="txmined" web3="{{web3}}"></locals-contractlistener>
+
+        <h1>Contract event listener</h1>
+        <h2></h2>
+        <locals-contractlistener contractaddress="0xA7B92A7b501F532ac39CbA524891e303707e3f21" web3="{{web3}}" on-filter-match="contractEvent"></locals-contractlistener>
+        <template is="dom-repeat" items="{{contractevents}}">
+          <li>TXHash {{item.result.transactionHash}} at block {{item.result.blockNumber}}</li>
+        </template>
+
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+
+    (function(document) {
+      'use strict';
+      var app = document.querySelector('#app');
+      app.host = "http://109.123.70.141:8545";
+//      app.host = "http://localhost:8545";
+      
+      app.contractevents = [];
+      app.contractEvent = function(e){
+        app.push('contractevents',e.detail);
+      }
+
+    })(document);
+
+  </script>
+
+</body>
+</html>

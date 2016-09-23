@@ -1,0 +1,14 @@
+{
+  "name": "eth-lightwallet",
+  "homepage": "https://github.com/BlockTube/eth-lightwallet",
+  "version": "2.4.2",
+  "_release": "2.4.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.4.2",
+    "commit": "4a39036f2c6a2774279d2da2b275056ae74c4351"
+  },
+  "_source": "https://github.com/BlockTube/eth-lightwallet.git",
+  "_target": "^2.4.1",
+  "_originalSource": "https://github.com/BlockTube/eth-lightwallet.git"
+}

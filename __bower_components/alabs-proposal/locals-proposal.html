@@ -1,0 +1,1064 @@
+
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../neon-animation/neon-animation.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../locals-button/locals-button.html">
+<link rel="import" href="../locals-item/locals-item.html">
+<link rel="import" href="../locals-icon/locals-icon.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../locals-confirm/locals-confirm.html">
+<link rel="import" href="../locals-input/locals-input.html">
+<link rel="import" href="../locals-textarea/locals-textarea.html">
+<link rel="import" href="../ipfs-upload/ipfs-upload.html">
+<link rel="import" href="../firebase-element/firebase.html">
+<link rel="import" href="../alabs-datetime/alabs-datetime.html">
+<link rel="import" href="../locals-contractlistener/locals-contractlistener.html">
+<script src="../pikaday/pikaday.js"></script>
+<script src="../moment/min/moment-with-locales.min.js"></script>
+
+<!--
+This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
+
+Example:
+
+    <locals-proposal ipfshash="the_ipfshash" edit></locals-proposal>
+
+@group Seed Elements
+@element locals-proposal
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="locals-proposal">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+     .whitespace {
+      height: 20px;
+     }
+      h1 {
+      @apply(--opensans-light);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 40px;
+      line-height: 52px;
+/*       @apply(--locals-font-h1);*/
+      }
+      h2 {
+       @apply(--locals-font-h2);
+      }
+      h3 {
+       @apply(--locals-font-h3);
+      }
+      h4 {
+       @apply(--locals-font-h4);
+      }
+      p {
+       @apply(--locals-font-body1);
+      }
+      small {
+       @apply(--locals-font-small);
+       color: rgba(0,0,0,0.75);
+      }
+
+      .from p {
+        font-size: 16px;
+
+        color: var(--locals-grey4);
+        @apply(--opensans-semibold);
+      }
+
+      .confirmbtns {
+        width: 100%;
+        @apply(--layout-horizontal);
+      }
+
+      .confirmbtns locals-button {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .votebtns {
+      }
+
+      .votebtns locals-button {
+        width: 250px;
+        margin: 5px 0px 5px 0px;
+      }
+
+      .accent {
+       @apply(--opensans-bold);
+       text-decoration: underline;
+      }
+
+      .accent2 {
+        @apply(--opensans-reg);
+       text-decoration: underline;
+      }
+
+
+      .voted {
+        max-width: 350px;
+        box-sizing: border-box;
+        padding: 25px;
+        background-color:var(--locals-grey1);
+      }
+
+      .line {
+        margin: 35px 0px 35px 0px;
+        height: 2px;
+        border-bottom: 2px dashed var(--locals-grey3);
+      }
+
+      .executed {
+        font-size: 11px;
+        box-sizing: border-box;
+        padding: 12px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .passed {
+        background-color: var(--locals-semigreen);
+        max-width: 315px;
+
+      }
+      .notpassed {
+        background-color: var(--locals-grey1);
+        max-width: 350px;
+      }
+
+      locals-icon {
+        margin-right: 10px;
+      }
+
+
+
+    </style>
+
+    <template is="dom-if" if="{{edit}}">
+
+
+<!--     <iron-pages selected="{{editselected}}"> -->
+    <neon-animated-pages
+      selected="{{editselected}}"
+      entry-animation="{{entryAnimation}}"
+      exit-animation="{{exitAnimation}}">
+
+   <!--  What you see when you add a new proposal -->
+    <neon-animatable>
+      <h1>New proposal</h1>
+<!--       <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
+ -->      <p>The current cost for a new proposal is <span>2</span> Î”.</p>
+     <!--  <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
+      <div class="whitespace"></div> -->
+
+      <ipfs-upload hash="{{description.hash}}" host="/ip4/109.123.70.141/tcp/5001"></ipfs-upload>
+      <locals-input bind-value="{{description.descr}}" value="{{description.descr}}" label="Description"></locals-input>
+      <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
+      <div class="whitespace"></div>
+      <locals-textarea bind-value="{{beneficiary}}" label="Beneficiary"></locals-textarea>
+      <div class="whitespace"></div>
+      <locals-button txtcolor="green" on-tap="prevProposal">Preview</locals-button>
+    </neon-animatable>
+
+    <!-- What you see: preview before submitting proposal -->
+    <neon-animatable>
+
+      <h1>{{description.descr}}</h1>
+      <p>{{description.hash}}</p>
+      <div class="from">
+      <p><span>{{budget}}</span> Î” for <span>{{beneficiary}}</span></p>
+      </div>
+      <div class="line"></div>
+    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal" small>You are posting this proposal.
+    </locals-confirm>
+    </neon-animatable>
+
+
+    <!-- What you see: progress of proposal submission -->
+    <neon-animatable>
+      <locals-contractlistener web3="{{web3}}" txhash="{{txhash}}">Your proposal is being submitted</locals-contractlistener>
+    </neon-animatable>
+
+    </neon-animated-pages>
+
+
+    </template>
+
+    <template is="dom-if" if="{{!edit}}">
+
+    <neon-animated-pages
+      selected="{{pageselected}}"
+      entry-animation="{{entryAnimation}}"
+      exit-animation="{{exitAnimation}}">
+      
+      <!-- What you see: non editable view of proposal, ready to vote on. -->
+      
+      <section>
+
+      <h1>{{data.description.descr}}</h1>
+      <a href="http://gateway.ipfs.io/ipfs/{{data.description.hash.hash}}" target="_blank">PDF</a>
+      <!-- <p>{{data.votingdeadline}}</p> -->
+      <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL" locale="EN"></alabs-datetime></p>
+      <p><span>{{data.amount}}</span> Î” for <span>{{data.recipient}}</span></p></div>
+      <div class="whitespace"></div>
+
+      <!-- If the voting has ended we don't need to show these buttons -->
+      <template is="dom-if" if="{{data.votingactive}}">
+
+      <template is="dom-if" if="{{!voted}}">
+        <!-- If you haven't already voted, you'll see the voting buttons. -->
+        <div class="votebtns">
+        <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
+        <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
+        </div>
+      </template>
+
+      <template is="dom-if" if="{{voted}}">
+        <div>You voted already</div>
+      </template>
+
+      </template>
+
+      <!-- If the voting has ended we don't need to show these buttons -->
+      <template is="dom-if" if="{{!data.votingactive}}">
+
+        <!-- if the proposal has ended, but hasn't been executed, show an execute button
+         -->
+
+        <template is="dom-if" if="{{!data.executed}}">
+          <locals-button on-tap="execute" txtcolor="blue"><span class="accent">Execute</span> this proposal</locals-button>
+        </template>
+
+        <template is="dom-if" if="{{data.executed}}">
+          <template is="dom-if" if="{{!data.passed}}">
+          <div class="executed notpassed">
+            <locals-icon icon="slash" iconcolor="grey5" class="notpassed" small></locals-icon>
+            <p> This proposal has not been passed.</p>
+          </div>
+          </template>
+          <template is="dom-if" if="{{data.passed}}">
+          <div class="executed passed">
+          <locals-icon icon="v" iconcolor="green" class="passed" small>
+          </locals-icon>
+          <p>This proposal has been passed.</p>
+          </div>
+          </template>
+        </template>
+
+      </template>
+
+    </section>
+
+    <!-- What you see: a confirmation / preview before you vote. -->
+    <section>
+    <locals-confirm on-cancel="cancel" on-confirm="saveVote">You are about to vote <span class="accent2">{{currentvote}}</span> this proposal.</locals-confirm>
+
+
+    </section>
+
+    <!-- What you see: the progress of your vote submission -->
+    <section>
+      <locals-contractlistener web3="{{web3}}" txhash="{{txhash}}">The proposal is being executed</locals-contractlistener>
+    </section>
+
+    </neon-animated-pages>
+
+    </template>
+
+
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'locals-proposal',
+
+    listeners: {
+        'votetxreceived': '_votetxreceived',
+        'votetxreceived': '_votetxmined'
+    },
+
+    properties: {
+
+      /**
+       * The IPFS hash, which can be resolved to a json object.
+       * @type {{ipfshash: string}}
+       */
+      data: {
+        type: Object,
+        observer: '_data'
+      },
+
+      /**
+       * The user's primary eth wallet account
+       * @type {{account: string}}
+       */
+      account: {
+        type: String
+      },
+
+      /**
+       * Boolean, triggers edit / read mode
+       * @type {{edit: boolean}}
+       */
+      edit: {
+        type: Boolean,
+        value: false
+      },
+
+      entryAnimation: {
+        type: String,
+        value:"slide-from-right-animation"
+      },
+      
+      exitAnimation: {
+        type: String,
+        value:"slide-left-animation"
+      },
+      /**
+       * Boolean, triggers already vote mode
+       * @type {{voted: boolean}}
+       */
+      voted: {
+        type: Boolean,
+        value: false
+      },
+
+      txhash: {
+        type:String,
+        notify: true
+      },
+
+      /**
+       * The author of the vote, an object with human readable name and eth address. 
+       *
+       * @type {{name: string, address: string}}
+       */
+      author: {
+        type: String
+      },
+
+      /** The subject of the proposal
+      * @type {{subject: string}}
+      */
+      subject: {
+        type: String
+      },
+
+
+      /** The description of the proposal
+      * @type {{description: string}}
+      */
+      description: {
+        type: Object,
+        value: {
+          descr: 'test',
+          hash: 'ipfshash'
+        },
+        observer: '_description'
+      },
+
+      /** The start date of the proposal (unixtime)
+      * @type {{startdate: number}}
+      */
+      startdate: {
+        type: Number
+      },
+
+      /** The end date of the proposal (unixtime)
+      * @type {{enddate: number}}
+      */
+      enddate: {
+        type: Number
+      },
+
+      /** The deliverables of the proposal (array)
+      * @type {{deliverables: Array}}
+      */
+      deliverables: {
+        type: Array,
+        value: []
+      },
+
+      /** The cost of creating a new proposal
+      * @type {{cost: number}}
+      */
+      cost: {
+        type: Number,
+        value: 0
+      },
+
+      /** The budget you're asking for in the proposal
+      * @type {{budget: number}}
+      */
+      budget: {
+        type: Number,
+        value: 0
+      },
+
+      /** Web3 object, used to sign the tx.
+      * @type {{web3: object}}
+      */
+      web3: {
+        type: Object,
+        notify: true,
+        observer: '_web3observer'
+      },
+
+      /** IPFS object
+      * @type {{ipfs: object}}
+      */
+      ipfs: {
+        type: Object
+      },
+
+      /** The contract address where the proposals are stored.
+      * @type {{contractaddr: string}}
+      */
+      contractaddr: {
+        type: String,
+        value: ''
+      },
+
+
+      editselected: {
+        type: Number,
+        observer: '_editselected'
+      },
+
+      pageselected: {
+        type: Number,
+        observer: '_pageselected'
+      },
+
+      
+      /** The contract application blockchain interface.
+      * @type {{contractabi: object}}
+      */
+      contractabi: {
+      type: Object,
+      value: [{
+        "constant": true,
+        "inputs": [{
+          "name": "",
+          "type": "uint256"
+        }],
+        "name": "proposals",
+        "outputs": [{
+          "name": "recipient",
+          "type": "address",
+          "value": "0x9f376495fc3678a059db1e823af1e1c92ea8f385"
+        }, {
+          "name": "amount",
+          "type": "uint256",
+          "value": "1"
+        }, {
+          "name": "description",
+          "type": "string",
+          "value": "Schrijf een blogpost"
+        }, {
+          "name": "votingDeadline",
+          "type": "uint256",
+          "value": "1461667765"
+        }, {
+          "name": "executed",
+          "type": "bool",
+          "value": true
+        }, {
+          "name": "proposalPassed",
+          "type": "bool",
+          "value": true
+        }, {
+          "name": "numberOfVotes",
+          "type": "uint256",
+          "value": "1"
+        }, {
+          "name": "proposalHash",
+          "type": "bytes32",
+          "value": "0xbbb6a09ee5888a4878fc378b3bca63f4d92e595b3ef276d9d352719f2d5caa07"
+        }],
+        "type": "function"
+      }, {
+        "constant": false,
+        "inputs": [{
+          "name": "proposalNumber",
+          "type": "uint256"
+        }, {
+          "name": "transactionBytecode",
+          "type": "bytes"
+        }],
+        "name": "executeProposal",
+        "outputs": [{
+          "name": "result",
+          "type": "int256"
+        }],
+        "type": "function"
+      }, {
+        "constant": true,
+        "inputs": [],
+        "name": "sharesTokenAddress",
+        "outputs": [{
+          "name": "",
+          "type": "address",
+          "value": "0x5bdb31fbbc4fed30db973d2d70537676c9d4dcb8"
+        }],
+        "type": "function"
+      }, {
+        "constant": true,
+        "inputs": [],
+        "name": "numProposals",
+        "outputs": [{
+          "name": "",
+          "type": "uint256",
+          "value": "6"
+        }],
+        "type": "function"
+      }, {
+        "constant": false,
+        "inputs": [{
+          "name": "sharesAddress",
+          "type": "address"
+        }, {
+          "name": "minimumSharesToPassAVote",
+          "type": "uint256"
+        }, {
+          "name": "minutesForDebate",
+          "type": "uint256"
+        }],
+        "name": "changeVotingRules",
+        "outputs": [],
+        "type": "function"
+      }, {
+        "constant": true,
+        "inputs": [],
+        "name": "debatingPeriodInMinutes",
+        "outputs": [{
+          "name": "",
+          "type": "uint256",
+          "value": "10"
+        }],
+        "type": "function"
+      }, {
+        "constant": true,
+        "inputs": [],
+        "name": "minimumQuorum",
+        "outputs": [{
+          "name": "",
+          "type": "uint256",
+          "value": "1"
+        }],
+        "type": "function"
+      }, {
+        "constant": true,
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{
+          "name": "",
+          "type": "address",
+          "value": "0x03f3be66f4dca6e7f5c15bd4950d78f66709ea44"
+        }],
+        "type": "function"
+      }, {
+        "constant": false,
+        "inputs": [{
+          "name": "beneficiary",
+          "type": "address"
+        }, {
+          "name": "etherAmount",
+          "type": "uint256"
+        }, {
+          "name": "JobDescription",
+          "type": "string"
+        }, {
+          "name": "transactionBytecode",
+          "type": "bytes"
+        }],
+        "name": "newProposal",
+        "outputs": [{
+          "name": "proposalID",
+          "type": "uint256"
+        }],
+        "type": "function"
+      }, {
+        "constant": false,
+        "inputs": [{
+          "name": "proposalNumber",
+          "type": "uint256"
+        }, {
+          "name": "supportsProposal",
+          "type": "bool"
+        }],
+        "name": "vote",
+        "outputs": [{
+          "name": "voteID",
+          "type": "uint256"
+        }],
+        "type": "function"
+      }, {
+        "constant": true,
+        "inputs": [{
+          "name": "proposalNumber",
+          "type": "uint256"
+        }, {
+          "name": "beneficiary",
+          "type": "address"
+        }, {
+          "name": "etherAmount",
+          "type": "uint256"
+        }, {
+          "name": "transactionBytecode",
+          "type": "bytes"
+        }],
+        "name": "checkProposalCode",
+        "outputs": [{
+          "name": "codeChecksOut",
+          "type": "bool",
+          "value": false
+        }],
+        "type": "function"
+      }, {
+        "constant": false,
+        "inputs": [{
+          "name": "newOwner",
+          "type": "address"
+        }],
+        "name": "transferOwnership",
+        "outputs": [],
+        "type": "function"
+      }, {
+        "inputs": [{
+          "name": "sharesAddress",
+          "type": "address",
+          "index": 0,
+          "typeShort": "address",
+          "bits": "",
+          "displayName": "shares Address",
+          "template": "elements_input_address",
+          "value": "0x79FCA913Bb8c6Be97145aFd5A9B70300663AF1d7"
+        }, {
+          "name": "minimumSharesToPassAVote",
+          "type": "uint256",
+          "index": 1,
+          "typeShort": "uint",
+          "bits": "256",
+          "displayName": "minimum Shares To Pass A Vote",
+          "template": "elements_input_uint",
+          "value": ""
+        }, {
+          "name": "minutesForDebate",
+          "type": "uint256",
+          "index": 2,
+          "typeShort": "uint",
+          "bits": "256",
+          "displayName": "minutes For Debate",
+          "template": "elements_input_uint",
+          "value": "5"
+        }],
+        "type": "constructor"
+      }, {
+        "anonymous": false,
+        "inputs": [{
+          "indexed": false,
+          "name": "proposalID",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "recipient",
+          "type": "address"
+        }, {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "description",
+          "type": "string"
+        }],
+        "name": "ProposalAdded",
+        "type": "event"
+      }, {
+        "anonymous": false,
+        "inputs": [{
+          "indexed": false,
+          "name": "proposalID",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "position",
+          "type": "bool"
+        }, {
+          "indexed": false,
+          "name": "voter",
+          "type": "address"
+        }],
+        "name": "Voted",
+        "type": "event"
+      }, {
+        "anonymous": false,
+        "inputs": [{
+          "indexed": false,
+          "name": "proposalID",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "result",
+          "type": "int256"
+        }, {
+          "indexed": false,
+          "name": "quorum",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "active",
+          "type": "bool"
+        }],
+        "name": "ProposalTallied",
+        "type": "event"
+      }, {
+        "anonymous": false,
+        "inputs": [{
+          "indexed": false,
+          "name": "minimumQuorum",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "debatingPeriodInMinutes",
+          "type": "uint256"
+        }, {
+          "indexed": false,
+          "name": "sharesTokenAddress",
+          "type": "address"
+        }],
+        "name": "ChangeOfRules",
+        "type": "event"
+      }]
+    }
+
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      this.toInitstate();
+      this.entryAnimation = "fade-in-animation";
+      this.exitAnimation = "fade-out-animation";
+
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+    },
+
+
+    attached: function() {
+      this.toInitstate();
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    toInitstate: function(){
+      this.editselected = 0;
+      this.pageselected = 0;
+      
+
+    },
+
+    _web3observer: function() {
+      console.log('locals-propsal : loaded web3');
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    _description: function(){
+      console.log('descr changed; ', this.description);
+    },
+
+    // Add 0x to address 
+    fixaddress: function(address) {
+      function strStartsWith(str, prefix) {
+        return str.indexOf(prefix) === 0;
+      }
+
+      if (!strStartsWith(address, '0x')) {
+        return ('0x' + address);
+      }
+      return address;
+    },
+
+    // Element Behavior
+
+    /**
+     * saveProposal: this saves the proposal on IPFS, Firebase, and stores the IPFS hash on Ethereum.
+     */
+    saveProposal: function() {
+      this.editselected = 2;
+
+      var self = this;
+
+      var proposal = {};
+      proposal.account = this.fixaddress(this.account);
+      proposal.beneficiary = this.beneficiary;
+      proposal.description = JSON.stringify(this.description);
+      proposal.budget = this.budget;
+
+      console.log(JSON.stringify(proposal));
+
+      this.transactionlog('savingtoipfs');
+
+      self.web3.eth.getGasPrice(function(err, result) {
+
+        var MyContract = self.web3.eth.contract(self.contractabi);
+        var myContractInstance = MyContract.at(self.contractaddr);
+
+        var gasPrice = result.toNumber(10);
+
+        self.transactionlog('gas price: ', gasPrice);
+
+        var beneficiary = self.fixaddress(self.beneficiary);
+
+        var account = self.fixaddress(self.account);
+
+        var options = {
+          from: account,
+          gas: 1000000,
+          gasPrice: gasPrice
+        };
+
+        var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
+          function(err, txhash) {
+            if (err != null) {
+              console.log(err);
+              console.log("ERROR: Transaction didn't go through. See console.");
+              self.transactionlog('ERROR: Transaction didnt go through. See console.');
+            } else {
+              console.log("Transaction Successful!");
+              self.transactionlog('Transaction success: ', txhash);
+//              self.setvoted(); //localStorage.setItem(self.data.proposalhash, false);
+              console.log('Tx hash=',txhash);
+               self.txhash = txhash;
+
+              // set vote status to TxHash received 
+              //self.votestatus = 2;
+              //self.transactionHash = txhash;
+              //self.transactionlog('Proposal has been added to the blockchain');
+            }
+          });
+        });
+    },
+
+    _data: function(){
+      if (this.data && this.data.proposalhash){
+        console.log(this.data);
+        var voted = localStorage.getItem(this.data.proposalhash);
+        console.log('voted?', voted);
+        this.voted = voted;        
+      }
+    },
+
+    /**
+     * _calccost: this calculates the total of deliverables costs.
+     */
+    _calccost: function(){
+      var cost = 0;
+      for (var i = this.deliverables.length - 1; i >= 0; i--) {
+        console.log(this.deliverables[i].budget);
+        cost = cost + this.deliverables[i].budget;
+      };
+      this.cost = cost;
+    },
+
+    transactionlog: function(arg){
+      var self = this;
+      var log = document.getElementById("log");
+      var item = document.createElement("p");
+      item.innerHTML = arg;
+      //log.appendChild(item);
+    },
+
+    voteyes: function(){
+      console.log('yes vote');
+      this.pageselected = 1;
+      this.supportsProposal = true;
+      this.currentvote = "for";
+    },
+
+    voteno: function(){
+      console.log('no vote');
+      this.supportsProposal = false;
+      this.currentvote = "against";
+      this.pageselected = 1;
+    },
+
+    setvoted: function(){
+
+      localStorage.setItem(this.data.proposalhash, true);
+      this.voted = true;
+
+// // Retrieve the object from storage
+// var retrievedObject = localStorage.getItem('testObject');
+
+      console.log('vote localstorage: ', this.data.proposalhash, ' set to ', true);
+      // name="{{data.proposalhash}}" value="{{voted}}" 
+    },
+
+    // event handler
+    _votetxreceived: function(){
+      console.log('TX received');
+    },
+
+    saveVote: function() {
+
+
+      var self = this;
+      self.web3.eth.getGasPrice(function(err, result) {
+
+        var MyContract = self.web3.eth.contract(self.contractabi);
+        var myContractInstance = MyContract.at(self.contractaddr);
+
+        var gasPrice = result.toNumber(10);
+        self.transactionlog('gas price: ', gasPrice);
+
+        var options = {
+          from: self.fixaddress(self.account),
+          //value: 1 * 1e18,
+          gas: 200000,
+          gasPrice: gasPrice,
+          nonce: new Date().getTime(),
+        };
+
+        self.transactionlog('Casting vote');
+        self.pageselected = 2;
+
+        var result = myContractInstance.vote.sendTransaction(self.data.index, self.supportsProposal, "tralala", options,
+          function(err, txhash) {
+            if (err != null) {
+              console.log(err);
+              self.transactionlog('ERROR: Transaction didnt go through. See console.');
+            } else {
+              self.transactionlog('Transaction success: ', txhash);
+              console.log('Tx hash=', txhash);
+              self.setvoted();
+              // this triggers the locals-contractlistener component
+              self.txhash = txhash;
+            }
+
+            self.transactionlog('Your vote has been added to the blockchain');
+          });
+      });
+    },
+
+    execute: function(){
+      var self = this;
+      self.web3.eth.getGasPrice(function(err, result) {
+
+        var MyContract = self.web3.eth.contract(self.contractabi);
+        var myContractInstance = MyContract.at(self.contractaddr);
+
+        var gasPrice = result.toNumber(10);
+        self.transactionlog('gas price: ', gasPrice);
+
+        var options = {
+          from: self.fixaddress(self.account),
+          //value: 1 * 1e18,
+          gas: 200000,
+          gasPrice: gasPrice,
+          nonce: new Date().getTime(),
+        };
+
+
+        self.transactionlog('Executing proposal for '+JSON.stringify(options));
+        self.pageselected = 2;
+
+        var result = myContractInstance.executeProposal.sendTransaction(self.data.index, null, options,
+          function(err, result) {
+            if (err != null) {
+              console.log(err);
+              self.transactionlog('ERROR: Transaction didnt go through. See console.');
+            } else {
+              self.transactionlog('Transaction success: ', result);
+              console.log('Tx hash=', result);
+              self.watchtransaction(result,function (err,res){
+                console.log('TX',result,'viewed on BC');
+              })
+              self.transactionlog('The proposal has been executed');
+            }
+          });
+      });
+    },
+
+    watchtransaction: function(txhash,cb){
+
+       var myfilter = document.createElement('locals-contractlistener');
+        myfilter.web3 = this.web3;
+        myfilter.filter = { topics : [txhash] };
+        myfilter.addEventListener('filter-match',function(err,res){
+//          myfilter.
+          console.log('watchtransaction matched something..',err,res);
+          cb(err,res);
+        });       
+
+    },
+
+    cancel: function(){
+      window.clearInterval();
+      this.pageselected = 0;
+      var log = document.getElementById("log");
+      //log.removeChildren();
+      while (log.hasChildNodes()) {
+        log.removeChild(log.lastChild);
+      };
+    },
+
+    prevProposal: function(){
+      this.editselected = 1;
+    },
+
+    toProposal: function(){
+      this.editselected = 0;
+    },
+
+    _editselected: function(){
+      // console.log("editselected is=", this.editselected);
+    },
+
+    _pageselected: function(){
+      console.log("pageselected is=", this.pageselected);
+    },
+
+  });
+
+</script>
+

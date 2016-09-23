@@ -1,0 +1,315 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="stylesheet" href="locals-input-datepicker.css">
+
+<!--
+This element uses the same structure as a paper-input but applies Locals-style to it. Use label, placeholder as attribute. Use the attr bind-value for two-way binding your value.
+
+Example:
+
+    <locals-input label="My input" placeholder="Just another txtinput">
+    </locals-input>
+
+
+
+Use date for a datepicker-input. 
+
+Example:
+
+    <locals-input date label="My date" placeholder="4th July 2016">
+    </locals-input>
+
+Use "type=time" for a time-input. The unixts give a unix time stamp.
+
+Example:
+
+    <locals-input type="time" label="My time">
+    </locals-input>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-input">
+<script src="../moment/min/moment-with-locales.min.js"></script>
+<script src="../pikaday/pikaday.js"></script>
+
+  <template>
+    <style>
+     :host {
+        display: block;
+        margin: 8px 0px 8px 0px;
+        --input-color: darkgrey;
+        width: 100%;
+        max-width: 100%;
+        --txt-align:left;
+        --transform-origin:left top;
+      }
+
+      .total {
+        position: relative;
+        box-sizing: border-box;
+        @apply(--layout-vertical);
+        @apply(--opensans-reg);
+        z-index: 0;
+      }
+
+      .label {
+        font-size: 12px;
+        z-index: -1;
+        box-sizing: border-box;
+        padding: 5px 5px 0px 0px;
+        color:var(--locals-grey4);
+        text-align: var(--txt-align);
+
+      }
+
+      input {
+        @apply(--opensans-reg);
+        color:var(--locals-darkgrey);
+        outline-width: 0;
+        outline: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        border: none;
+        z-index: 0;
+        box-sizing: border-box;
+        padding: 4px 8px 4px 0px;
+        font-size: 16px;
+        background-color: transparent;
+        border-bottom: 1px solid rgba(0,0,0,0.3);
+        text-align: var(--txt-align);
+      
+        -webkit-user-select: text;
+        -khtml-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+        border-radius: 0px;
+
+      }
+
+      .nocontent label {
+        color: rgba(0,0,0,0.4);
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        -webkit-transform-origin: var(--transform-origin);
+        transform-origin: var(--transform-origin);
+        -webkit-transform: translateY(0%) translateX(10px) translateY(20px) scale(1.35);
+        transform: translateY(0%) translateX(10px) translateY(20px) scale(1.35);
+
+      }
+
+      .infocus label {
+        color: var(--input-color);
+        @apply(--opensans-semibold);
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        -webkit-transform-origin: var(--transform-origin);
+        transform-origin: var(--transform-origin);
+        -webkit-transform: translateY(0%) translateX(0px) scale(1);
+        transform: translateY(0%) translateX(0px) scale(1);
+      }
+
+      .infocus input {
+        border-bottom: 2px solid var(--locals-darkgrey);
+
+      }
+
+      .outfocus .nocontent label {
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        -webkit-transform-origin: var(--transform-origin);
+        transform-origin: var(--transform-origin);
+        -webkit-transform: translateY(0%) translateX(0px) scale(1);
+        transform: translateY(0%) translateX(0px) scale(1);
+      }
+
+
+
+    </style>
+
+    <div class$="{{focusclass}} {{contentclass}} total">
+      <label class="label">[[label]]</label>
+      <content select="[prefix]"></content>
+      <input id="inputter"
+        is="iron-input"
+        bind-value="{{inputvalue}}"
+        autofocus="[[autofocus]]"
+        type="{{type}}"
+        name$="[[name]]"
+        >
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'locals-input',
+
+      behaviors: [
+      ],
+
+      properties: {
+
+        color: {
+          type:String,
+          value: 'darkgrey',
+          observer: '_color'
+        },
+
+        inputvalue: {
+          type: String,
+          observer: '_inputvalue'
+        },
+
+        autofocus: {
+          type: Boolean,
+          value: false
+        },
+
+        date: {
+          type: Boolean,
+          value: false,
+          observer: '_date'
+        },
+
+        txt: {
+          type: Boolean,
+          value: false
+        },
+
+        center: {
+          type: Boolean,
+          value: false,
+          observer:'_center'
+        },
+
+        type: {
+          type: String,
+          value: 'text',
+          observer: '_type'
+        },
+
+
+        unixts: {
+          type: Number,
+          notify:true
+        },
+
+      },
+
+      _inputvalue: function (){
+        if(this.inputvalue){
+          this.contentclass = 'withcontent';
+        } else {
+          this.contentclass = 'nocontent';
+        }
+
+      },
+
+
+      ready: function() {
+        this.addEventListener('focus', this._boundtoFocus, true);
+        this.addEventListener('blur', this._boundtoBlur, true);
+        this._inputvalue();
+      },
+
+      attached: function() {
+
+
+              // if(!this.txt && this.date){
+              //   console.log('ik heb een date');
+              // }
+
+          // this._pickaday();
+
+        // if(this.date){
+        //   this._pickaday();
+        // } else {
+        //   console.log("No pickaday");
+        // }
+
+
+
+      },
+
+
+
+
+      detached: function() {
+      },
+
+      _boundtoFocus: function(){
+          this.focusclass = 'infocus';
+      },
+
+      _boundtoBlur: function(){
+          this.focusclass = 'outfocus';
+          this._inputvalue();
+      },
+
+      _color: function(){
+        this.inputcolor = 'var(--locals-'+this.color+')';
+        this.customStyle['--input-color'] = this.inputcolor;
+        this.updateStyles();
+      },
+
+      _type:function(){
+        // console.log(this.type);
+      },
+
+      _center: function(){
+        if(this.center){
+        this.customStyle['--txt-align'] = 'center';
+        this.customStyle['--transform-origin'] = 'center top';
+        } else {
+        this.customStyle['--txt-align'] = 'left';
+        this.customStyle['--transform-origin'] = 'left top';
+
+        }
+        this.updateStyles();
+
+      },
+
+
+      _date: function(){
+
+      
+      if(!this.txt && this.date){
+          var self = this;
+          var picker = new Pikaday(
+          {
+              field: this.$.inputter,
+              firstDay: 1,
+              minDate: new Date(2000, 0, 1),
+              maxDate: new Date(2020, 12, 31),
+              yearRange: [2000,2020],
+              onSelect: function() {
+                  self.inputvalue = this.getMoment().format('Do MMMM YYYY') + ' ';
+                  // var date = document.createTextNode(this.getMoment().format('Do MMMM YYYY') + ' ');
+                  // self.$.selected.appendChild(date);
+                  self.unixts = this.getMoment().format('X');
+              }
+          });          
+          // picker.setMoment(moment().dayOfYear(366));
+        }
+      }
+
+
+
+    });
+  </script>
+</dom-module>

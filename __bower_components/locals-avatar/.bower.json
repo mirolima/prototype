@@ -1,0 +1,39 @@
+{
+  "name": "locals-avatar",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-avatar.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "locals-object": "https://github.com/locals-world/locals-object.git"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0"
+  },
+  "resolutions": {
+    "locals-button": "^0.0.5"
+  },
+  "_release": "0ecf0080d9",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0ecf0080d92e1030114058e49b3c465bcefe1c9a"
+  },
+  "_source": "https://github.com/locals-world/locals-avatar.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/locals-world/locals-avatar.git"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "ipfs-upload",
+  "version": "0.0.14",
+  "authors": [
+    "Stefaan Ponnet <stefaan@ponnet.com>"
+  ],
+  "description": "An upload element for IPFS",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "ipfs",
+    "js-ipfs-api"
+  ],
+  "main": "ipfs-upload.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/locals-world/ipfs-upload/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "js-ipfs-api": "https://github.com/ipfs/js-ipfs-api.git#^2.13.2"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  },
+  "_release": "0.0.14",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.14",
+    "commit": "632ed78936fd1090d7f106dbd3bd06d5a30d5a1f"
+  },
+  "_source": "https://github.com/locals-world/ipfs-upload.git",
+  "_target": "^0.0.14",
+  "_originalSource": "https://github.com/locals-world/ipfs-upload.git"
+}

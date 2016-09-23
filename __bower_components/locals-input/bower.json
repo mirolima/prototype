@@ -1,0 +1,31 @@
+{
+  "name": "locals-input",
+  "version": "1.0.7",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-input.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-input": "^1.0.10",
+    "locals-style": "https://github.com/locals-world/locals-style.git",
+    "paper-input": "^1.1.11",
+    "pikaday": "https://github.com/dbushell/Pikaday.git#^1.4.0",
+    "moment": "https://github.com/moment/moment.git#^2.13.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+  }
+}

@@ -1,0 +1,190 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-object/locals-object.html">
+<link rel="import" href="../locals-object/locals-dataobject.html">
+
+<!--
+Locals residence : a residence object.
+
+Example:
+
+    <locals-residence
+      visualstate="{{visualstate}}"
+      datastate="{{datastate}}"
+      on-visual-state-changed="visualstateupdated"
+      on-data-state-changed="datastateupdated">     
+    </locals-residence>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-residence">
+  <template>
+   <locals-object on-internalstatechange="_fixdata" config="[[config]]" objectdata="[[objectdata]]" state="{{visualstate}}" on-state-changed="_visualstatechanged" renderstate="{{renderstate}}"></locals-object>
+   <locals-dataobject id="ldataobject" hashfunction="{{hashfunction}}" on-state-changed="_datastatechanged" objectdata="[[objectdata]]" state="{{datastate}}" config="[[dataconfig]]" renderstate="{{renderstate}}"></locals-dataobject>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-residence',
+
+      properties: {
+        _version: {
+          type: String,
+          value: '0.0.1'
+        },
+        /* Configuration of the avatar's visual state.
+        can be set on initialisation - data is returned to this variable.
+        */
+        visualstate: {
+          type: Array,
+          notify: true,
+          value: [ [ 2, 0 ] ]
+        },
+        /* configuration of the object's data state.
+         can be set on initialisation - data is returned to this variable
+        */
+        datastate: {
+          type: Object,
+          notify: true,
+          value: {
+              "residence": "Mijn Huis",
+            }
+        },
+
+        renderstate: {
+          type: String          
+        },
+        objectdata: {
+          type: Object,
+
+        },
+        hashfunction: {
+          type: Function
+        }
+      },
+
+      _newblock: function(){
+       
+      },
+
+      _is: function(a, b) {
+        if (b === undefined){
+          b = true;
+        }
+        return a === b;
+      },
+
+
+      _fixdata: function(e){
+        // console.log('fix data',e.detail);
+
+        // console.log('color of body',e.detail[this.layerindex['body']][1]);
+        // console.log('color of head',e.detail[this.layerindex['head']][1]);
+
+        // copy head color to body color
+        // if (e.detail[this.layerindex['head']][1] != e.detail[this.layerindex['body']][1]){
+        //   e.detail[this.layerindex['head']][1] = e.detail[this.layerindex['body']][1];
+        //   this.visualstate = e.detail;
+        // }
+
+      },
+
+      // Element Lifecycle
+      ready: function() {
+
+        this.dataconfig = {
+          fields: [
+            {
+              name: "name",
+              type: "input",
+              label: "Name"
+            }
+          ]
+        };
+
+        this.config = 
+{ layers: 
+   [ { name: 'residence',
+       icon: this.resolveUrl("./images/residence-icon.png"),
+       iconselected: this.resolveUrl("./images/residence-icon-selected.png"),
+       variants: [ 'basic', 'hirise', 'lorise', 'mansion' ],
+       colors: [ 'nocolor' ],
+       images: 
+        { 'basic-nocolor': this.resolveUrl("./images/0-residence-residence-basic-nocolor.png"),
+          'hirise-nocolor': this.resolveUrl("./images/0-residence-residence-hirise-nocolor.png"),
+          'lorise-nocolor': this.resolveUrl("./images/0-residence-residence-lorise-nocolor.png"),
+          'mansion-nocolor': this.resolveUrl("./images/0-residence-residence-mansion-nocolor.png") } } ],
+  defaultstate: [ [ 0, 0 ] ] }
+
+
+;
+
+  this.layerindex = {};
+
+    var self= this;
+      // make some layers invisible
+      this.config.layers = this.config.layers.map(function(layer,index){
+        self.layerindex[layer.name] = index;
+        // if (layer.name == 'head' || layer.name == 'facemale'){
+        //   layer.hidden = true;
+        // }
+        return layer;
+      });
+
+
+        if (!this.visualstate) {
+          // default state
+          this.visualstate = this.config.defaultstate;
+        }
+
+        if (!this.datastate) {
+          this.datastate = {
+              "name": "",
+          };
+        }
+
+
+      },
+
+      attached: function() {
+        //var user = document.querySelector('locals-user');
+        var self = this;
+        //debugger;
+        // if (this.renderstate !== 'dataview'){
+        //   user.addEventListener('newblock', function() {
+        //     var validations = self.$.ldataobject.getValidations();
+        //   });          
+        // }
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      _visualstatechanged: function(e) {
+        //console.log('Visual state changed');
+        this.fire('visual-state-changed',e.detail);
+      },
+
+      _datastatechanged: function(e) {
+        //console.log('Data state changed');
+        this.fire('data-state-changed',e.detail);
+      },
+
+
+    });
+  </script>
+</dom-module>

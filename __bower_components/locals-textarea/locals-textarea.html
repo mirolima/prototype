@@ -1,0 +1,244 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-textarea></locals-textarea>
+
+Example:
+
+    <locals-textarea>
+      <h2>Hello locals-textarea</h2>
+    </locals-textarea>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-textarea">
+  <template>
+    <style>
+     :host {
+        display: block;
+        margin: 5px 0px 0px 0px;
+        --input-color: darkgrey;
+        --autogrow-text: rgba(0,0,0,0.04);
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .total {
+        position: relative;
+        box-sizing: border-box;
+        @apply(--layout-vertical);
+        @apply(--opensans-reg);
+        z-index: 0;
+        background-color: transparent;
+
+      }
+
+      .label {
+        font-size: 12px;
+        z-index: -1;
+        box-sizing: border-box;
+        padding: 5px 5px 0px 0px;
+        color:var(--locals-darkgrey);
+        background-color: transparent;
+      }
+
+
+      iron-autogrow-textarea {
+        width: 100%;
+        @apply(--opensans-reg);
+        color:var(--locals-darkgrey);
+        outline-width: 0;
+        outline: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        border: none;
+        z-index: 0;
+        box-sizing: border-box;
+        padding: 8px !important;
+        font-size: 16px;
+        background-color: var(--autogrow-text);
+
+      }
+
+      .withcontent {
+        border-bottom: 2px solid rgba(0,0,0,0.075);
+        background-color: rgba(0,0,0,0);
+        padding: 0px 0px 4px 0px;
+      }
+
+
+      .nocontent {
+/*        background-color: rgba(0,0,0,0.04);
+*/      }
+      .withcontent label {
+        color: lightgrey;
+      }
+
+
+      .outfocus {
+        box-sizing: border-box;
+        @apply(--opensans-reg);
+        transition: background-color 0.25s, padding 0.25s;
+
+      }
+      .outfocus label {
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
+        -webkit-transform: translateY(0%) translateX(0px) scale(1);
+        transform: translateY(0%) translateX(0px) scale(1);
+        background-color: transparent;
+      }
+
+
+      
+      .infocus {
+        transition: background-color 0.25s, padding 0.25s;
+        background-color: rgba(0,0,0,0);
+        @apply(--opensans-semibold);
+        margin-top: 4px;
+        box-sizing: border-box;
+        padding: 8px;
+        border-bottom: 2px solid var(--input-color);
+     }
+
+      .infocus label {
+        color: var(--input-color);
+        @apply(--opensans-semibold);
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
+        -webkit-transform: translateY(0%) translateX(8px) scale(1.15);
+        transform: translateY(0%) translateX(8px) scale(1.15);
+        padding: 5px 5px 0px 0px;
+      }
+
+    </style>
+
+
+    <div class$="{{focusclass}} {{contentclass}} total">
+      <label class="label">[[label]]</label>
+      <iron-autogrow-textarea class="grower" id="inputter" bind-value="{{inputvalue}}" placeholder$="[[placeholder]]" type="{{type}}"></iron-autogrow-textarea>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-textarea',
+
+      behaviors: [
+      ],
+
+      properties: {
+
+        color: {
+          type:String,
+          value: 'darkgrey',
+          observer: '_color'
+        },
+
+        inputvalue: {
+          type: String,
+          value: ''
+        },
+
+
+        txt: {
+          type: Boolean,
+          value: false
+        },
+
+        type: {
+          type: String,
+          value: 'text',
+          observer: '_type'
+        },
+
+      },
+
+      _inputvalue: function (){
+        if(this.inputvalue){
+          this.contentclass = 'withcontent';
+        } else {
+          this.contentclass = 'nocontent';
+        }
+
+      },
+
+
+      ready: function() {
+        this.addEventListener('focus', this._boundtoFocus, true);
+        this.addEventListener('blur', this._boundtoBlur, true);
+        this._inputvalue();
+      },
+
+      attached: function() {
+      },
+
+
+
+
+      detached: function() {
+      },
+
+      _boundtoFocus: function(){
+          this.focusclass = 'infocus';
+
+        this.customStyle['--autogrow-text'] = 'transparent';
+        this.updateStyles();  
+
+      },
+
+      _boundtoBlur: function(){
+          this.focusclass = 'outfocus';
+          this._inputvalue();
+
+        if(this.inputvalue){
+        this.customStyle['--autogrow-text'] = 'transparent';
+        this.updateStyles(); 
+        } else {
+        this.customStyle['--autogrow-text'] = 'rgba(0,0,0,0.04)';
+        this.updateStyles();  
+        }
+
+
+
+      },
+
+      _color: function(){
+        this.inputcolor = 'var(--locals-'+this.color+')';
+        this.customStyle['--input-color'] = this.inputcolor;
+        this.updateStyles();
+      },
+
+      _type:function(){
+        // console.log(this.type);
+      },
+
+    });
+  </script>
+</dom-module>

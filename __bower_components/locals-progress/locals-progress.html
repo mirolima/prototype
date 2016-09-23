@@ -1,0 +1,334 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../locals-icon/locals-icon.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+
+<!--
+A element to visualize progress in the Locals-style. The default is based on the paper-progress-component. Add max and value to determine these values. Add a size-attribute for height in px. Example:
+
+    <locals-progress max="100" value="22" size="100"></locals-progress>
+Add the attribute 'round' to show a round version of the component. Example:
+<locals-progress round max="100" value="56" size="120">
+Add a fill or bg to change the colors. Example:
+<locals-progress max="100" value="75" fill="lightblue" bg="darkblue"></locals-progress>
+@element locals-progress
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="locals-progress">
+    <style>
+        :host {
+            display: block;
+            height: var(--locals-progress-height);
+            position: relative;
+            background: var(--locals-progress-background, radial-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2)));
+            --locals-progress-stroke-color: red;
+            --locals-progress-bg-stroke-color: green;
+            --locals-progress-stroke-linecap: blue;
+            --locals-progress-height: 44px;
+            --stroke-size: 3px solid var(--locals-blue);
+        }
+
+
+      :host([round]) {
+            display: block;
+            --prog-size: 100px;
+            width: var(--prog-size);
+            height: var(--prog-size);
+            margin: 10px 10px 10px 0px;
+            position: relative;
+            background: var(--locals-progress-background, radial-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2)));
+            border-radius: 50%;
+            --locals-progress-stroke-color: red;
+            --locals-progress-bg-stroke-color: green;
+            --locals-progress-stroke-linecap: blue;
+            --locals-progress-height: 44px;
+            border: var(--stroke-size);
+
+        }
+
+
+        svg, div {
+            opacity: 0;
+            transition: opacity 150ms;
+        }
+        :host(.calculation-ready) svg,
+        :host(.calculation-ready) div {
+            opacity: 1;
+        }
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #bgCircle {
+            stroke: var(--locals-progress-bg-stroke-color);
+        }
+        #svgCircle {
+            transition: stroke-dashoffset 150ms;
+            stroke: var(--locals-progress-stroke-color);
+            stroke-linecap: var(--locals-progress-stroke-linecap);
+        }
+
+
+
+        paper-progress {
+            --paper-progress-container-color: var(--locals-progress-bg-stroke-color);
+            --paper-progress-active-color: var(--locals-progress-stroke-color);
+            --paper-progress-height: var(--locals-progress-height);
+            width: 100%;
+
+        }
+
+        .clock {
+            width: var(--prog-size);
+            height: var(--prog-size);
+            border-radius: 50%;
+            border: 2px solid black;
+            box-sizing: border-box;
+            z-index: 9;
+/*            @apply(--layout-horizontal);
+            @apply(--layout-center-center);*/
+        }
+
+        locals-icon {
+            opacity: 0.35;
+        }
+
+
+    </style>
+    <template>
+
+        <template is="dom-if" if="{{round}}">
+            <div class="round">
+                <svg id="progressArc" width="100%" height="100%">
+                    <circle id="bgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
+                    stroke-width$="[[strokeWidth]]" />
+                    <circle id="svgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
+                stroke-width$="[[strokeWidth]]"
+                stroke-dasharray$="[[_dasharray]]"
+                stroke-dashoffset$="[[_dashoffset]]"
+                transform$="[[_transform]]" />
+
+                </svg>
+            <template is="dom-if" if="{{time}}">
+
+            </template>
+
+            </div>
+        </template>
+
+        <template is="dom-if" if="{{!round}}">
+            <paper-progress class="transiting" value="{{value}}" max="{{max}}" disabled$="[[disabled]]"></paper-progress>
+        </template>
+
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: 'locals-progress',
+        properties: {
+            value: {
+                type: Number,
+                value: 0
+            },
+
+            round: {
+                type: Boolean,
+                value: false
+            },
+
+            start: {
+                type: Number
+            },
+
+            end: {
+                type: Number
+            },
+
+            max: {
+                type: Number,
+                value: 100
+            },
+
+            timenow: {
+                type: Number,
+                observer: '_timenow'
+            },
+
+            size: {
+                type: Number,
+                value: 4,
+                observer: '_size'
+            },
+
+            strokeWidth: {
+                type: Number
+            },
+
+            bg: {
+                type: String,
+                value: 'grey1',
+                observer: '_bg'
+            },
+
+            fill: {
+                type: String,
+                value: 'green',
+                observer: '_fill'
+            },
+
+            _cx: {
+                type: Number,
+                value: 50
+            },
+            _cy: {
+                type: Number,
+                value: 50
+            },
+            _radius: {
+                type: Number,
+                computed: '_computeRadius(_cx, _cy, strokeWidth)'
+            },
+            _transform: {
+                type: String,
+                computed: '_computeTransform(_cx, _cy)'
+            },
+            _dasharray: {
+                type: Number,
+                computed: '_computeDashArray(_radius)'
+            },
+            _dashoffset: {
+                type: Number,
+                computed: '_computeDashOffset(value, max, _dasharray)'
+            },
+
+            disabled: {
+                type: Boolean,
+                value: false,
+                reflectToAttribute: true,
+                observer: '_disabled'
+            },
+
+            time: {
+                type: Boolean,
+                value: false,
+                observer: '_time'
+            },
+
+            smallclock: {
+                type: Boolean,
+                value: false
+            }
+
+        },
+
+        ready: function() {
+            this.timenow = Math.floor(Date.now() / 1000);
+            if (this.timenow >= this.end) {
+                this.timenow = this.end;
+            } else {
+
+                var self = this;
+                this.timer = window.setInterval(function() {
+                    self.timenow = Math.floor(Date.now() / 1000);
+                    if (self.timenow >= self.end) {
+                        window.clearInterval(self.timer);
+                        self.fire('finished');
+                    }
+                }, 1000);
+            }
+        },
+
+        _timenow: function() {
+            this.value = (this.timenow - this.start) / (this.end - this.start) * 100;
+            // in case our timer still needs to start, value is negative. Dont allow this.
+            if (this.value < 0){
+                this.value = 0;
+            }
+        },
+
+        _computeRadius: function(_cx, _cy, strokeWidth) {
+            return Math.max(0, Math.min(_cx, _cy) - strokeWidth / 2);
+        },
+        _computeDashArray: function(_radius) {
+            return 2 * Math.PI * _radius;
+        },
+        _computeDashOffset: function(value, max, _dasharray) {
+            return (1 - value / max) * _dasharray;
+        },
+        _computeTransform: function(_cx, _cy) {
+            return 'rotate(-90, ' + _cx + ', ' + _cy + ')';
+        },
+        redraw: function() {
+            this._cx = this.clientWidth / 2;
+            this._cy = this.clientHeight / 2;
+            // Keep the content invisible before first calculation is done.
+            this.classList.add('calculation-ready');
+        },
+        attached: function() {
+            // Must use this.async in order to have clientWidth/clientHeight available.
+            this.async(this.redraw, 100);
+        },
+        attributeChanged: function() {
+            this.redraw();
+        },
+
+        _size: function() {
+            if (this.round) {
+                this.strokeWidth = this.size / 2;
+                this.sizeinpx = this.size + 'px';
+                this.customStyle['--prog-size'] = this.sizeinpx;
+                this.updateStyles();
+            } else {
+                this.sizeinpx = this.size + 'px';
+                this.customStyle['--locals-progress-height'] = this.sizeinpx;
+                this.updateStyles();
+            }
+        },
+
+        _bg: function() {
+            this.bgcolor = 'var(--locals-' + this.bg + ')';
+            this.customStyle['--locals-progress-bg-stroke-color'] = this.bgcolor;
+            this.updateStyles();
+        },
+
+        _fill: function() {
+            this.fillcolor = 'var(--locals-' + this.fill + ')';
+            this.customStyle['--locals-progress-stroke-color'] = this.fillcolor;
+            this.updateStyles();
+        },
+
+        _disabled: function() {
+            if (this.disabled) {
+                this.customStyle['--locals-progress-bg-stroke-color'] = 'var(--locals-grey1)';
+                this.customStyle['--locals-progress-stroke-color'] = 'var(--locals-grey3)';
+                this.updateStyles();
+            }
+        },
+
+        _time: function(){
+            if(this.size > 50){
+            this.customStyle['--stroke-size'] = '10px solid var(--locals-blue)';
+            this.updateStyles();
+            }
+            if(this.size < 50){
+            this.customStyle['--stroke-size'] = '3px solid var(--locals-blue)';
+            this.updateStyles();
+            }
+
+        }
+
+
+
+    });
+</script>

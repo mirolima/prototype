@@ -1,0 +1,35 @@
+{
+  "name": "locals-objectcollection",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-objectcollection.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "locals-objectrender": "https://github.com/locals-world/locals-objectrender.git"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+  },
+  "_release": "d6950b83b4",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d6950b83b4f1d14b31be655eb5660f743a6e2705"
+  },
+  "_source": "https://github.com/locals-world/locals-objectcollection.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/locals-world/locals-objectcollection.git"
+}

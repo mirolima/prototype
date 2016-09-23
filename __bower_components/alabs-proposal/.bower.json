@@ -1,0 +1,50 @@
+{
+  "name": "alabs-proposal",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "alabs-proposal.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "locals-item": "https://github.com/locals-world/locals-item.git",
+    "locals-input": "https://github.com/locals-world/locals-input.git",
+    "locals-button": "https://github.com/locals-world/locals-button.git",
+    "ipfs-upload": "^0.0.10",
+    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12",
+    "alabs-datetime": "https://github.com/A-Labs/alabs-datetime.git",
+    "locals-textarea": "https://github.com/locals-world/locals-textarea.git",
+    "iron-pages": "^1.0.7",
+    "locals-style": "https://github.com/locals-world/locals-style.git",
+    "neon-animation": "^1.2.2",
+    "locals-confirm": "https://github.com/locals-world/locals-confirm.git",
+    "moment": "momentjs#^2.13.0",
+    "locals-loader": "https://github.com/locals-world/locals-loader.git",
+    "locals-icon": "https://github.com/locals-world/locals-icon.git",
+    "locals-contractlistener": "https://github.com/locals-world/locals-contractlistener.git#^0.0.8"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  },
+  "_release": "f6331b838b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f6331b838bf68629bc0568d5fb48d51f01ee4734"
+  },
+  "_source": "https://github.com/locals-world/locals-proposal.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/locals-world/locals-proposal.git"
+}

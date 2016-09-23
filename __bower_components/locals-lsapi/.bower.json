@@ -1,0 +1,36 @@
+{
+  "name": "locals-lsapi",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-lsapi.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-localstorage": "^1.0.5",
+    "crypto-js": "CryptoJS#^3.1.12"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+  },
+  "_release": "e9aef49bb0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e9aef49bb0916a9da6693aa0ac3e031186852c7c"
+  },
+  "_source": "https://github.com/locals-world/locals-lsapi.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/locals-world/locals-lsapi.git"
+}

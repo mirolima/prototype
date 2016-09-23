@@ -1,0 +1,198 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!--  <script src="../js-ipfs-api/dist/ipfsapi.min.js"></script> -->
+<script src="./vendor/ipfsapi.min.js"></script>
+
+<!--
+Upload files to IPFS. Currently requires an IPFS node ( local or remote )
+
+
+Example:
+
+    <ipfs-upload></ipfs-upload>
+
+@demo
+-->
+<dom-module id="ipfs-upload">
+
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+    }
+
+    #fileinput
+    {
+        display:block;
+    }
+
+  </style>
+
+  <template>
+    <content></content>
+    <input type="file" id="fileinput" on-change="_fileChange" multiple="{{multi}}" accept="{{accept}}">
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'ipfs-upload',
+
+    listeners: {
+      tap: '_fileinputclicked'
+    },
+
+    properties: {
+
+      /**
+       * `host` the host to connect to.
+       */
+
+      host: {
+        type: String,
+        value: "/ip4/127.0.0.1/tcp/5001"
+      },
+
+      /**
+       * `multi` indicates whether or not to allow multiple files to be uploaded.
+      */
+      multi: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * include the attribute `hidefileinput` to hide the file browse input field ( if you only want to use the API)
+      */
+      hidefileinput: {
+        type: Boolean,
+        value: false,
+        //observer: "_showfileinputchanged"
+      },
+
+      /**
+       * `accept` is the set of comma separated file extensions or mime types
+       * to filter as accepted.
+      */
+      accept: {
+        type: String,
+        value: ""
+      },
+
+      /**
+       * `hashes` is an array of hashes of the files that were uploaded. This property is filled in when using the multi attribute.
+      */
+      hash: {
+        type: String,
+        notify: true
+      },
+
+      /**
+       * `hash` is the IPFS hash of the uploaded file that were uploaded when not using the multi attribute.
+      */
+      hashes: {
+        type: Array,
+        notify: true,
+        value:[]
+      },
+
+      /**
+      * 'ipfs' is the API object as exposed by js-ipfs-api ( https://github.com/ipfs/js-ipfs-api )
+      */
+
+      ipfs: {
+        type: Object,
+        notify:true
+      }
+    },
+
+
+
+    // Element Lifecycle
+
+    ready: function() {
+      this.ipfs = window.ipfsAPI(this.host);
+
+      if (this.hidefileinput) {
+        this.$.fileinput.style.display = "none";
+      }
+
+    },
+
+    _fileinputclicked: function(){
+      this.$.fileinput.click();
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    _fileChange: function(e) {
+      var self = this;
+      var length = e.target.files.length;
+      for (var i = 0; i < length; i++) {
+        var file = e.target.files[i];
+        var reader = new FileReader();
+        // If we use onloadend, we need to check the readyState.
+        reader.onloadend = function(evt) {
+          if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+            self.fire('upload-started',file);
+            self.ipfs.add([new self.ipfs.Buffer(evt.target.result)], function(err, res) {
+              if (err || !res){
+                return self.fire('upload-error',err);
+              }
+
+              res.forEach(function(ipfsfile) {
+                if (self.multi) {
+                  self.push('hashes', {
+                    hash: ipfsfile.Hash
+                  });
+                } else {
+                  self.hash = {
+                    hash: ipfsfile.Hash
+                  };
+                }
+                self.fire('ipfs-hash-received', {
+                  file: file,
+                  hash: ipfsfile.Hash
+                });
+              })
+            })
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    },
+    // Add a string to IPFS - calls cb when done
+    add : function(data,cb){
+      var b = new Buffer(data);
+      this.ipfs.add(b, function(err, res) {
+          if (cb) cb(err,res);
+      });
+    }
+});
+
+</script>
