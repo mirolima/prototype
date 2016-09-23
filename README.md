@@ -52,3 +52,6 @@ The frontend app is a Polymer web-app. After you have compiled and deployed the 
 ``node ./scripts/mint.js getlc "e3b29238498e55dc5723fd43912036c5293bdef9" 100``
 
 will mint 1 token to your account. Your token balance will appear in the app after the next mined block.
+
+Make sure your account also had some ether to perform your transactions ( again : use our testnet faucet )
+
