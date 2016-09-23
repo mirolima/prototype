@@ -62,6 +62,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.route = 'users';
     });
 
+    page('/backup', function() {
+      app.route = 'backup';
+    });
+
     page('/offer/:offerid', function(data) {
       app.route = 'offer';
       app.params = data.params;

@@ -137,9 +137,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <span>Settings</span>
           </a>
 
-          <a data-route="contact" href="{{baseUrl}}contact">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Settings</span>
+          <a data-route="contact" href="{{baseUrl}}backup">
+            <iron-icon icon="backup"></iron-icon>
+            <span>Backup</span>
           </a>
 
           <a data-route="contact" href="{{baseUrl}}contact">
@@ -208,6 +208,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="offer">
                 <paper-icon-button icon="close" on-tap="home"></paper-icon-button>
                 <view-offer offerid="{{params.offerid}}"></view-offer>
+            </section>
+
+            <section data-route="backup">
+                <paper-icon-button icon="close" on-tap="home"></paper-icon-button>
+                <locals-backup></locals-backup>
             </section>
 
             <section data-route="newoffer">
