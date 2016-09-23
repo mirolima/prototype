@@ -1,6 +1,6 @@
 import "./owned.sol";
 
-contract REPToken is owned {
+contract arcReptoken is owned {
     /* Public variables of the token */
     string public name;
     string public symbol;
@@ -10,15 +10,15 @@ contract REPToken is owned {
 
     /* This creates an array with all balances */
     mapping (address => uint256) public balanceOf;
-   
+
     /* This generates a public event on the blockchain that will notify clients */
     event Minted(address target, uint256 amount);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function REPToken(
+    function arcReptoken(
         string tokenName,
         string tokenSymbol
-        ) {                
+        ) {
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purpose
         whitelist[msg.sender] = true;

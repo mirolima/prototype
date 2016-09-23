@@ -66,7 +66,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       on-locationfound="resize"
       layer="mapbox.light">
       <template is="dom-repeat" items="{{data}}">
-        <mapbox-marker offer="{{item.ipfsobject}}" click-events on-click="selectoffer" latitude="{{item.latitude}}" longitude="{{item.longitude}}"></mapbox-map-marker>
+        <mapbox-marker offerid="{{item.key}}" offer="{{item.ipfsobject}}" click-events on-click="selectoffer" latitude="{{item.latitude}}" longitude="{{item.longitude}}"></mapbox-map-marker>
       </template>
     </mapbox-map>
   </template>
@@ -95,7 +95,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           zoom: {
             type: Number,
-            value: 15
+            value: 20
           }
         },
 
@@ -119,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         selectoffer: function(e) {
           //console.log('arker',e.target.offerid);
-          page('/users/' + e.target.offer.duration);
+          page('/offer/' + e.target.offerid);
         },
 
         goAddOffer: function() {

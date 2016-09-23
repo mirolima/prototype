@@ -112,7 +112,7 @@ contract StandardToken is Token {
 
 }
 
-contract ARCToken is StandardToken, SafeMath {
+contract arcToken is StandardToken, SafeMath {
     string public name = "Arcade City Token";
     string public symbol = "ARC";
     uint public decimals = 18;
@@ -137,7 +137,7 @@ contract ARCToken is StandardToken, SafeMath {
     event AllocateFounderTokens(address indexed sender);
     event AllocateBountyAndEcosystemTokens(address indexed sender);
 
-    function ARCToken(address founderInput, uint startBlockInput, uint endBlockInput) {
+    function arcToken(address founderInput, uint startBlockInput, uint endBlockInput) {
       founder = founderInput;
       startBlock = startBlockInput;
       endBlock = endBlockInput;
