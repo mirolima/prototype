@@ -231,13 +231,13 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("localsTruth error: Please call setProvider() first before calling new().");
+      throw new Error("REPToken error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("localsTruth error: contract binary not set. Can't deploy new instance.");
+      throw new Error("REPToken error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -256,7 +256,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("localsTruth contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of localsTruth: " + unlinked_libraries);
+      throw new Error("REPToken contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of REPToken: " + unlinked_libraries);
     }
 
     var self = this;
@@ -297,7 +297,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to localsTruth.at(): " + address);
+      throw new Error("Invalid address passed to REPToken.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -308,7 +308,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: localsTruth not deployed or address not set.");
+      throw new Error("Cannot find deployed address: REPToken not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -350,26 +350,25 @@ var SolidityEvent = require("web3/lib/web3/event.js");
   "default": {
     "abi": [
       {
-        "constant": false,
-        "inputs": [
+        "constant": true,
+        "inputs": [],
+        "name": "name",
+        "outputs": [
           {
-            "name": "_hashowner",
-            "type": "address"
-          },
-          {
-            "name": "_thehash",
-            "type": "string"
-          },
-          {
-            "name": "_senderhash",
+            "name": "",
             "type": "string"
           }
         ],
-        "name": "addVerification",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "totalSupply",
         "outputs": [
           {
-            "name": "_feedback",
-            "type": "string"
+            "name": "",
+            "type": "uint256"
           }
         ],
         "type": "function"
@@ -378,6 +377,51 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [],
         "name": "kill",
+        "outputs": [],
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "name": "mintedAmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "mintToken",
+        "outputs": [],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_whitelistaddr",
+            "type": "address"
+          }
+        ],
+        "name": "removeFromWhitelist",
         "outputs": [],
         "type": "function"
       },
@@ -394,79 +438,67 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "type": "function"
       },
       {
-        "constant": false,
-        "inputs": [
+        "constant": true,
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [
           {
-            "name": "_thehash",
+            "name": "",
             "type": "string"
           }
         ],
-        "name": "seedVerification",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "whitelist",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_whitelistaddr",
+            "type": "address"
+          }
+        ],
+        "name": "addToWhitelist",
         "outputs": [],
         "type": "function"
       },
       {
-        "constant": true,
-        "inputs": [],
-        "name": "tokenaddr",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
         "constant": false,
         "inputs": [
           {
-            "name": "_hash",
-            "type": "string"
-          }
-        ],
-        "name": "checkVeracity",
-        "outputs": [
-          {
-            "name": "numVerifications",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "verificationthresh",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "token",
-        "outputs": [
-          {
-            "name": "",
+            "name": "newOwner",
             "type": "address"
           }
         ],
+        "name": "transferOwnership",
+        "outputs": [],
         "type": "function"
       },
       {
         "inputs": [
           {
-            "name": "token",
-            "type": "address"
+            "name": "tokenName",
+            "type": "string"
           },
           {
-            "name": "_verificationthresh",
-            "type": "uint256"
+            "name": "tokenSymbol",
+            "type": "string"
           }
         ],
         "type": "constructor"
@@ -476,75 +508,40 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "inputs": [
           {
             "indexed": false,
-            "name": "_from",
+            "name": "target",
             "type": "address"
           },
           {
             "indexed": false,
-            "name": "_to",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "name": "_numverifications",
+            "name": "amount",
             "type": "uint256"
           }
         ],
-        "name": "ValidationAdded",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "name": "_err",
-            "type": "string"
-          }
-        ],
-        "name": "Error",
+        "name": "Minted",
         "type": "event"
       }
     ],
-    "unlinked_binary": "0x606060408181528061085f833960a09052516080516000805433600160a060020a03199182161782556002805490911690931790925560035561081890819061004790396000f36060604052361561006c5760e060020a6000350463309d6669811461006e57806341c0e1b5146102245780638da5cb5b1461024d578063ad5fb2b11461025f578063bce934a9146102c4578063cb7fd9db146102d6578063f59b9fbb14610371578063fc0c546a1461037a575b005b60408051602060248035600481810135601f810185900485028601850190965285855261038c9581359591946044949293909201918190840183828082843750506040805160209735808a0135601f81018a90048a0283018a019093528282529698976064979196506024919091019450909250829150840183828082843750949650505050505050602060405190810160405280600081526020015060006000600360005054600460005085604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600301600050541015610694576040805160208082526026908201527f766572696669657220686173206e6f7420656e6f7567682076657269666963618183015260d160020a653a34b7b7399702606082015290517f08c379a0afcc32b1a39302f7cb8073359698411ab5fd6e3edb2c02c0b5fba8aa9181900360800190a160408051606081018252602681527f766572696669657220686173206e6f7420656e6f756768207665726966696361602082015260d160020a653a34b7b739970291810191909152925061068b565b61006c600054600160a060020a039081163390911614156107c657600054600160a060020a0316ff5b6103fa600054600160a060020a031681565b61006c6004808035906020019082018035906020019191908080601f0160208091040260200160405190810160405280939291908181526020018383808284375094965050505050505060005433600160a060020a039081169116146107c857610002565b6103fa600254600160a060020a031681565b6104176004808035906020019082018035906020019191908080601f016020809104026020016040519081016040528093929190818152602001838380828437509496505050505050506000600460005082604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600301600050549050919050565b61041760035481565b6103fa600154600160a060020a031681565b60405180806020018281038252838181518152602001915080519060200190808383829060006004602084601f0104600302600f01f150905090810190601f1680156103ec5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b60408051600160a060020a03929092168252519081900360200190f35b60408051918252519081900360200190f35b600260009054906101000a9004600160a060020a03169150600460005085604051808280519060200190808383829060006004602084601f0104600302600f01f15090500191505090815260200160405180910390206000506003016000505490506001600460005086604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600201600050600033600160a060020a0316815260200190815260200160002060006101000a81548160ff0219169083021790555080600101600460005086604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600301600050819055507fe4c1101a04108b38e519c05f24ec5cbe5dadd91dc285aaadc2a40839a8c52ec43387600460005088604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600301600050546040518084600160a060020a0316815260200183600160a060020a03168152602001828152602001935050505060405180910390a16040805160e360020a630f38ca0d02815233600160a060020a0316600482015260056024820152905183916379c65068916044828101926000929190829003018183876161da5a03f11561000257506040805160e360020a630f38ca0d028152600160a060020a038a1660048201526005602482015290516044828101926000929190829003018183876161da5a03f115610002575050505b50509392505050565b600460005085604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600201600050600033600160a060020a0316815260200190815260200160002060009054906101000a900460ff161515600115151415610429576040805160208082526021908201527f6d73672073656e64657220616c726561647920766572696669656420746869738183015260f960020a601702606082015290517f08c379a0afcc32b1a39302f7cb8073359698411ab5fd6e3edb2c02c0b5fba8aa9181900360800190a160408051606081018252602181527f6d73672073656e64657220616c72656164792076657269666965642074686973602082015260f960020a60170291810191909152925061068b565b565b6002600460005082604051808280519060200190808383829060006004602084601f0104600302600f01f1509050019150509081526020016040518091039020600050600301600050819055505056",
+    "unlinked_binary": "0x60606040526040516105b23803806105b2833981016040528051608051908201910160008054600160a060020a031916331790558160016000509080519060200190828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106100cf57805160ff19168380011785555b506100ff9291505b808211156101585760008155600101610086565b5050600160a060020a0333166000908152600460205260409020805460ff1916600117905550506104268061018c6000396000f35b8280016001018555821561007e579182015b8281111561007e5782518260005055916020019190600101906100e1565b50508060026000509080519060200190828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061015c57805160ff19168380011785555b5061009a929150610086565b5090565b8280016001018555821561014c579182015b8281111561014c57825182600050559160200191906001019061016e566060604052361561008d5760e060020a600035046306fdde03811461009557806318160ddd146100f257806341c0e1b5146100fb57806370a082311461011a57806379c65068146101325780638ab1d681146101625780638da5cb5b1461018457806395d89b41146101965780639b19251a146101f3578063e43252d71461020e578063f2fde38b1461022f575b610250610002565b60408051600180546020600282841615610100026000190190921691909104601f8101829004820284018201909452838352610252939083018282801561032e5780601f106103035761010080835404028352916020019161032e565b6102c060035481565b610250600054600160a060020a03908116339091161461033657610002565b6102c060043560056020526000908152604090205481565b61025060043560243533600160a060020a031660009081526004602052604090205460ff16151561034457610002565b610250600435600054600160a060020a0390811633909116146103bf57610002565b6102d2600054600160a060020a031681565b61025260028054604080516020601f6000196001861615610100020190941685900493840181900481028201810190925282815292919083018282801561032e5780601f106103035761010080835404028352916020019161032e565b6102ef60043560046020526000908152604090205460ff1681565b61025060043560005433600160a060020a039081169116146103e057610002565b61025060043560005433600160a060020a0390811691161461040457610002565b005b60405180806020018281038252838181518152602001915080519060200190808383829060006004602084601f0104600302600f01f150905090810190601f1680156102b25780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b60408051918252519081900360200190f35b60408051600160a060020a03929092168252519081900360200190f35b604080519115158252519081900360200190f35b820191906000526020600020905b81548152906001019060200180831161031157829003601f168201915b505050505081565b600054600160a060020a0316ff5b81600160a060020a03166000141561035b57610002565b600160a060020a03821660008181526005602090815260409182902080548501905560038054850190558151928352820183905280517f30385c845b448a36257a6a1716e6ad2e1bc2cbe333cde1e69fe849ad6511adfe9281900390910190a15050565b600160a060020a03166000908152600460205260409020805460ff19169055565b600160a060020a03166000908152600460205260409020805460ff19166001179055565b6000805473ffffffffffffffffffffffffffffffffffffffff1916821790555056",
     "events": {
-      "0xe4c1101a04108b38e519c05f24ec5cbe5dadd91dc285aaadc2a40839a8c52ec4": {
+      "0x30385c845b448a36257a6a1716e6ad2e1bc2cbe333cde1e69fe849ad6511adfe": {
         "anonymous": false,
         "inputs": [
           {
             "indexed": false,
-            "name": "_from",
+            "name": "target",
             "type": "address"
           },
           {
             "indexed": false,
-            "name": "_to",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "name": "_numverifications",
+            "name": "amount",
             "type": "uint256"
           }
         ],
-        "name": "ValidationAdded",
-        "type": "event"
-      },
-      "0x08c379a0afcc32b1a39302f7cb8073359698411ab5fd6e3edb2c02c0b5fba8aa": {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "name": "_err",
-            "type": "string"
-          }
-        ],
-        "name": "Error",
+        "name": "Minted",
         "type": "event"
       }
     },
-    "updated_at": 1474467172461,
-    "links": {}
+    "updated_at": 1474642406421
   }
 };
 
@@ -629,7 +626,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "localsTruth";
+  Contract.contract_name   = Contract.prototype.contract_name   = "REPToken";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.2.0";
 
   // Allow people to opt-in to breaking changes now.
@@ -669,6 +666,6 @@ var SolidityEvent = require("web3/lib/web3/event.js");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.localsTruth = Contract;
+    window.REPToken = Contract;
   }
 })();
