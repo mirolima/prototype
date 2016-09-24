@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "devDependencies": {
+    "glob-all": "^3.0.1",
+    "gulp": "^3.8.5",
+    "path": "^0.12.7",
+    "solc": "^0.1.6"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "postinstall" : "gulp solc"
+  }
+}

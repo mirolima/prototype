@@ -1,0 +1,67 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>locals-whisperer Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../locals-whisperer.html">
+    <link rel="import" href="../../web3-wallet/web3-wallet.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
+  </head>
+  <body unresolved>
+
+
+  <template is="dom-bind" id="app">
+
+    <web3-wallet id="web3wallet" web3="{{web3}}" host="http://faucet.ma.cx:8545" account={{account}} password="test" walletname="{{walletname}}"></web3-wallet>
+
+    <locals-whisperer identity="{{identity}}" id="whisperer" web3="{{web3}}" topic="{{topic}}" on-message-received="msgrecieved">
+    </locals-whisperer>
+      <h2>Walletname is [[walletname]]</h2>
+      <h2>My account is [[account]]</h2>
+      <h2>My identity is [[identity]]</h2>
+      <h2>My topic is {{topic}}</h2>
+      <paper-input label="enter a channel" value="{{remotechannel}}"></paper-input>
+      <paper-button raised on-tap="sendamessage">Send a message!</paper-button>
+
+      <h2>Messages</h2>
+      <template is="dom-repeat" items="{{messages}}">
+        <li>From : {{item.from}} : {{item.message}}</li>
+      </template>
+
+
+  </template>
+    <script>
+      var app = document.querySelector('#app');
+      app.walletname = "w" + Math.floor(Math.random() * 100000000);
+      app.messages = [];
+      app.sendamessage = function() {
+        console.log('send message....', app.remotechannel);
+        //        console.log(whisperer);
+        app.$.whisperer.whisperpost(app.remotechannel, "ping");
+
+      };
+
+      app.msgrecieved = function(e) {
+        console.log(e);
+        this.push('messages', e.detail);
+        if (e.detail.message === 'ping') {
+          app.$.whisperer.whisperpost(e.detail.from, "pong");
+        }
+      }
+      
+    </script>
+
+  </body>
+</html>

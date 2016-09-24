@@ -1,0 +1,188 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../locals-object/locals-object.html">
+<link rel="import" href="../locals-object/locals-dataobject.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-community></locals-community>
+
+@group Seed Elements
+@element locals-community
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="locals-community">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        color: black;
+      }
+  
+      
+    </style>
+    <iron-pages selected="{{state}}">
+      <section id="closed">
+      CLOSED
+       <locals-object on-internalstatechange="_fixdata" config="[[config]]" state="{{visualstate}}" on-state-changed="_visualstatechanged"></locals-object>
+        <!-- <locals-dataobject on-state-changed="_datastatechanged" state="{{datastate}}" config="[[dataconfig]]"></locals-dataobject> -->
+      </section>
+      <section id="init">
+        <h1>Welcome to your new community</h1>
+        <p>Choose a name and logo</p>
+        <locals-button icon="add" on-tap=""></locals-button>
+      </section>
+      <section id="open">
+        <alabs-voting contractaddr="{{contract}}"></alabs-voting>
+      </section>
+    </iron-pages>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'locals-community',
+
+    properties: {
+
+
+       _version: {
+          type: String,
+          value: '0.0.1'
+        },
+        /* Configuration of the object's visual state.
+        can be set on initialisation - data is returned to this variable.
+        */
+        visualstate: {
+          type: Array,
+          notify: true
+        },
+        /* configuration of the object's data state.
+         can be set on initialisation - data is returned to this variable
+        */
+        datastate: {
+          type: Object,
+          notify: true
+        }
+
+      
+     
+
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      this.state = 'closed';
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+
+ this.dataconfig = {
+          fields: [
+            {
+              name: "firstname",
+              type: "input",
+              label: "Firstname"
+            }, {
+              name: "lastname",
+              type: "input",
+              label: "Lastname"
+            }, {
+              name: "birthplace",
+              type: "input",
+              label: "Birthplace"
+            }, {
+              name: "birthdate",
+              type: "input",
+              label: "Birthdate"
+            },
+          ]
+        };
+
+        this.config = 
+{ layers: 
+   [ { name: 'flag',
+       icon: this.resolveUrl("./images/flag-icon.png"),
+       iconselected: this.resolveUrl("./images/flag-icon-selected.png"),
+       variants: [ 'default' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'yellow' ],
+       images: 
+        { 'default-blue': this.resolveUrl("./images/0-community-flag-default-blue.png"),
+          'default-darkblue': this.resolveUrl("./images/0-community-flag-default-darkblue.png"),
+          'default-green': this.resolveUrl("./images/0-community-flag-default-green.png"),
+          'default-lightblue': this.resolveUrl("./images/0-community-flag-default-lightblue.png"),
+          'default-purple': this.resolveUrl("./images/0-community-flag-default-purple.png"),
+          'default-red': this.resolveUrl("./images/0-community-flag-default-red.png"),
+          'default-yellow': this.resolveUrl("./images/0-community-flag-default-yellow.png") } } ],
+  defaultstate: [ [ 0, 0 ] ] }
+
+;
+
+    },
+
+    // Fix 
+    _fixdata: function(){
+
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    // Element Behavior
+
+    /**
+     * The `locals-community-lasers` event is fired whenever `fireLasers` is called.
+     *
+     * @event locals-community-lasers
+     * @detail {{sound: String}}
+     */
+
+    open: function(){
+      this.state = 1;
+    }
+
+  });
+
+</script>

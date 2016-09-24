@@ -1,0 +1,31 @@
+{
+  "name": "locals-dropdown",
+  "version": "1.0.7",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-dropdown.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-dropdown": "^1.4.0",
+    "neon-animation": "^1.2.2",
+    "locals-button": "https://github.com/locals-world/locals-button.git#^0.0.5",
+    "locals-icon": "https://github.com/locals-world/locals-icon.git",
+    "locals-menu": "https://github.com/locals-world/locals-menu.git"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+  }
+}

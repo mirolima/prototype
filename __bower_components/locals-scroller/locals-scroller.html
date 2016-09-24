@@ -1,0 +1,201 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<!-- <link rel="import" href="../iron-pages/iron-pages.html"> -->
+<!-- <link rel="import" href="../locals-avatar/locals-avatar.html"> -->
+<!-- <link rel="import" href="../locals-objectrender/locals-objectrender.html"> -->
+<!-- <link rel="import" href="../locals-objectcollection/locals-objectcollection.html"> -->
+<!-- <link rel="import" href="../neon-animation/neon-animation.html"> -->
+<link rel="import" href="../locals-objectrender/locals-objectrender.html">
+
+
+<!--
+The scroller! 
+
+Example:
+
+    <locals-scroller></locals-scroller>
+
+@group Seed Elements
+@element locals-scroller
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="locals-scroller">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+/*        height: 100vh;*/
+        color: white;
+
+      }
+
+      #fooContainer {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        width: 100%;
+        overflow-x: scroll;
+        box-sizing: border-box;
+        padding-left: 10vw; 
+      }
+
+      #detailContainer {
+        width: 100vw;
+      }
+
+      #total {
+/*        background-color: red;*/
+      }
+
+      .object {
+        margin: 60px;
+        font-size: 40px;
+      }
+
+      /* DOES THIS WORK? */
+      ::-webkit-scrollbar { 
+          display: none; 
+      }
+
+      .abs {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+
+      .test {
+        background-color: red;
+        width: 100px;
+        height: 100px;
+      }
+
+    </style>
+      <div id="fooContainer">
+          <template is="dom-repeat" items="{{dataset}}">
+            <div id="total">
+            <locals-objectrender on-detail-tapped="gotoDetail" key="{{dataset.key}}" objectdata="{{item}}" renderstate="closed" class="foo"></locals-objectrender>
+            </div>
+          </template>
+      </div>
+
+<!--     <neon-animated-pages selected="{{page}}" id="pages">
+      <locals-objectcollection objects="{{objects}}" on-to-detail="gotoDetail"></locals-objectcollection>
+      <locals-objectrender on-tap="gotoEdit" key="{{selecteditem.key}}" objectdata="{{selecteditem.data}}" class="objectrender"></locals-objectrender>
+    </neon-animated-pages> -->
+
+  </template>
+
+</dom-module>
+
+<script src="//cdn.jsdelivr.net/scrollreveal.js/3.1.4/scrollreveal.min.js"></script>
+<script>
+
+  Polymer({
+
+    is: 'locals-scroller',
+    behaviors: [
+    Polymer.NeonSharedElementAnimatableBehavior,
+    Polymer.NeonAnimatableBehavior
+    ],
+    properties: {
+
+      /**
+      * `objects` the array of objects to be rendered.
+      */
+      objects: {
+        type: Array,
+        observer: '_objects'
+      },
+
+      route: {
+        type: String,
+        notify: true  
+        },
+
+      /**
+      * Start rendering objects as from:
+      */
+      startnum: Number,
+
+      /**
+      * End rendering objects:
+      */
+      endnum: Number,
+
+      /**
+      * The selected object:
+      */
+      selected: Number
+
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+    },
+
+     attached: function() {
+      window.sr = ScrollReveal({distance: 0, origin: 'top', scale: 0.4, reset: true});
+      var fooContainer = document.getElementById('fooContainer');
+      sr.reveal('.foo', { opacity: 1, easing: 'cubic-bezier(0.150, 0.450, 0.150, 0.735)', viewFactor:0.1, duration: 300,
+            delay: 0, container: fooContainer, distance: 0, origin: 'top', scale: 0.6, reset: true });
+      },
+
+      detached: function() {
+ 
+      },
+
+      
+
+      gotoDetail: function(e){
+        // this.fire('to-detail', e.detail);
+        //this.route = "/objectdetail";
+        this.fire('object-selected', {object: e.detail});
+      },
+
+
+    // renderObjects: function(objects, start, end){
+
+    // },
+
+    _objects: function(){
+      this.dataset = this.object2array(this.objects);
+    },
+    selectobject: function(e) {
+      this.selectedobject = this.dataset[e.target.id];
+      this.fire('object-selected', {object: this.selectedobject});
+    },
+
+    // back: function(){
+    //   this.page = 0;
+    // },
+
+    object2array: function(input){
+      var newarray = [];
+      var p = input;
+      var previewdata = Object.keys(input);
+      for (var key in p) {        
+        if (p.hasOwnProperty(key)) {
+          newarray.key = key;
+          newarray.push(p[key]);
+        }
+      };
+      return newarray;
+    }
+
+
+  });
+
+</script>

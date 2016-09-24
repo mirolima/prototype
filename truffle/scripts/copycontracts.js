@@ -8,7 +8,8 @@ for (var i in files) {
 
 	var data = {
 		bytecode: f.all_networks.default.unlinked_binary,
-		abi: f.all_networks.default.abi
+		abi: f.all_networks.default.abi,
+		address: f.all_networks.default.address
 	};
 
 	console.log(data);

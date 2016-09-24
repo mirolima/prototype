@@ -1,0 +1,175 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-objectrender/locals-objectrender.html">
+<link rel="import" href="../neon-animation/neon-animation.html">
+<link rel="import" href="../neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../neon-animation/animations/hero-animation.html">
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-objectcollection></locals-objectcollection>
+
+Example:
+
+    <locals-objectcollection>
+      <h2>Hello locals-objectcollection</h2>
+    </locals-objectcollection>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-objectcollection">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+      #fooContainer {
+        display: block;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        width: 100%;
+        overflow-x: scroll;
+        box-sizing: border-box;
+        padding-left: 10vw; 
+      }
+      #total {
+/*        width: 500px;
+        height: 500px;
+        background-color: red;*/
+/*        border:1px solid red;*/
+
+      }
+      /* DOES THIS WORK? */
+      ::-webkit-scrollbar { 
+          display: none; 
+      }
+    </style>
+<!-- <div id="total" on-tap="gotoDetail"></div> -->
+      <div id="fooContainer">
+          <template is="dom-repeat" items="{{dataset}}">
+            <div id="total">
+            <locals-objectrender on-detail-tapped="gotoDetail" key="{{dataset.key}}" objectdata="{{item}}" class="foo"></locals-objectrender>
+            </div>
+          </template>
+      </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-objectcollection',
+    behaviors: [
+    Polymer.NeonSharedElementAnimatableBehavior,
+    Polymer.NeonAnimatableBehavior
+    ],
+      properties: {
+
+      animationConfig: { 
+          value: function(){
+          return {
+            'entry': {
+              name: 'hero-animation',
+              id: 'hero',
+              toPage: this
+            },
+            'exit': {
+              name: 'hero-animation',
+              id: 'hero',
+              fromPage: this
+            },
+          }
+          }
+        },
+
+      sharedElements: {
+          value: function(){
+           return {
+            'hero': this.$.total
+           } 
+          }
+        },
+
+      objects: {
+        type: Array,
+        observer: '_objects'
+      },
+
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+
+      },
+
+      attached: function() {
+      window.sr = ScrollReveal({distance: 0, origin: 'top', scale: 0.4, reset: true});
+      var fooContainer = document.getElementById('fooContainer');
+      sr.reveal('.foo', { opacity: 1, easing: 'cubic-bezier(0.150, 0.450, 0.150, 0.735)', viewFactor:0.1, duration: 300,
+            delay: 0, container: fooContainer, distance: 0, origin: 'top', scale: 0.6, reset: true });
+      },
+
+      detached: function() {
+ 
+      },
+
+      
+
+      gotoDetail: function(e){
+        console.log(e.detail);
+        this.fire('to-detail', e.detail);
+      },
+
+
+    renderObjects: function(objects, start, end){
+
+    },
+
+    _objects: function(){
+      this.dataset = this.object2array(this.objects);
+    },
+    selectobject: function(e) {
+      console.log(e.target.id);
+      this.selectedobject = this.dataset[e.target.id];
+      console.log(this.selectedobject);
+      //this.page = 1;
+      this.fire('object-selected', {object: this.selectedobject});
+    },
+
+    back: function(){
+      this.page = 0;
+    },
+
+    object2array: function(input){
+      var newarray = [];
+      var p = input;
+      var previewdata = Object.keys(input);
+      //console.log('Object2array: ',previewdata);
+      for (var key in p) {        
+        if (p.hasOwnProperty(key)) {
+          newarray.key = key;
+          newarray.push(p[key]);
+          console.log(newarray);
+        }
+      };
+      return newarray;
+    }
+
+
+
+    });
+  </script>
+</dom-module>

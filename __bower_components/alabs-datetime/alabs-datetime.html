@@ -1,0 +1,131 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <alabs-datetime></alabs-datetime>
+
+@group Seed Elements
+@element alabs-datetime
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="alabs-datetime">
+<script src="../moment/min/moment-with-locales.min.js"></script>
+
+  <template>
+   {{stamp}}
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'alabs-datetime',
+
+    properties: {
+
+      /**
+       * 'relative', boolean. If true, returns the time from now or until now.
+       */
+      relative: {
+        type: Boolean
+      },
+      
+      /**
+       * timestamp, a unix timestamp.
+       */
+      timestamp: {
+        type: String,
+        observer: '_timestamp',
+        value: function(){
+          return Date.now();
+        }
+      },
+
+      /**
+       * stamp, human readable time and date.
+       */
+      stamp: {
+        type: String
+      },
+
+      /**
+       * locale, the localisation (en, nl, fr, ...).
+       */
+      locale: {
+        type: String,
+        value: 'nl'
+      },
+
+       /**
+       * The format you want returned.
+       * 'LT'   // 14:58
+       * 'LTS'  // 14:58:40
+       * 'L'    // 21-04-2016
+       * 'l'    // 21-4-2016
+       * 'LL'   // 21 april 2016
+       * 'll'   // 21 apr. 2016
+       * 'LLL'  // 21 april 2016 14:58
+       * 'lll'  // 21 apr. 2016 14:58
+       * 'LLLL' // donderdag 21 april 2016 14:58
+       */
+      format: {
+        type: String,
+        value: 'LLLL'
+      }
+
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+      if(!this.relative){
+        this.stamp = moment(this.timestamp).locale(this.locale).format(this.format);
+      } else {
+        this.stamp = moment(this.timestamp).locale(this.locale).fromNow();
+      } 
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    _timestamp: function(){
+      //console.log(this.timestamp);
+    }
+
+  });
+
+</script>

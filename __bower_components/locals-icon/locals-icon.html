@@ -1,0 +1,242 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../locals-iconset/locals-iconset.html">
+<link rel="import" href="../locals-style/locals-style.html">
+
+<!--
+The Locals-icon can be used to display one of the icons from the locals-iconset. Use a big, small or normal as attribute to determine the size. Use "iconcolor="yourcolor" to determine the color of the icon.
+
+Example:
+
+    <locals-icon icon="plus" small></locals-icon>
+    <locals-icon icon="plus" iconcolor="blue"></locals-icon>
+    <locals-icon icon="plus" big iconcolor="green"></locals-icon>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-icon">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+        --icon-color: var(--locals-grey2);
+      }
+
+      .veryverysmall {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 15px;
+      --iron-icon-height: 15px;
+      --iron-icon-fill-color: var(--icon-color);
+      }
+
+      .verysmall {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 22px;
+      --iron-icon-height: 22px;
+      --iron-icon-fill-color: var(--icon-color);
+      }
+
+      .small {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 30px;
+      --iron-icon-height: 30px;
+      --iron-icon-fill-color: var(--icon-color);
+      }
+
+      .normal {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 50px;
+      --iron-icon-height: 50px;
+      --iron-icon-fill-color: var(--icon-color);
+      }
+
+
+      .big {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 70px;
+      --iron-icon-height: 70px;
+      --iron-icon-fill-color: var(--icon-color);
+      }
+
+      .xl {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 100px;
+      --iron-icon-height: 100px;
+      }
+
+
+      .xxl {
+        display: block;
+        box-sizing: border-box;
+      --iron-icon-width: 150px;
+      --iron-icon-height: 150px;
+      }
+
+
+    </style>
+
+
+    <template is="dom-if" if="{{veryverysmall}}">
+    <iron-icon class="veryverysmall" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+    <template is="dom-if" if="{{verysmall}}">
+    <iron-icon class="verysmall" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+    <template is="dom-if" if="{{small}}">
+    <iron-icon class="small" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+    <template is="dom-if" if="{{normal}}">
+    <iron-icon class="normal" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+    <template is="dom-if" if="{{big}}">
+    <iron-icon class="big" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+    <template is="dom-if" if="{{xl}}">
+    <iron-icon class="xl" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+    <template is="dom-if" if="{{xxl}}">
+    <iron-icon class="xxl" icon="{{localsicon}}">
+      <content></content>
+    </iron-icon>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-icon',
+
+      properties: {
+
+        icon: {
+          type:String,
+          value: 'first',
+          observer: '_icon'
+        },
+
+        localsicon: {
+          type:String,
+        },
+
+
+        normal: {
+          type: Boolean,
+          value: true
+        },
+
+
+        veryverysmall: {
+          type: Boolean,
+          value: false,
+          observer: '_notnormal'
+        },
+
+
+        verysmall: {
+          type: Boolean,
+          value: false,
+          observer: '_notnormal'
+        },
+
+
+        small: {
+          type: Boolean,
+          value: false,
+          observer: '_notnormal'
+        },
+
+        big: {
+          type: Boolean,
+          value: false,
+          observer: '_notnormal'
+        },
+
+        xl: {
+          type: Boolean,
+          value: false,
+          observer: '_notnormal'
+        },
+
+        xxl: {
+          type: Boolean,
+          value: false,
+          observer: '_notnormal'
+        },
+
+        iconcolor: {
+          type: String,
+          observer: '_iconcolor'
+        },
+
+
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+      },
+
+      attached: function() {
+      },
+
+      detached: function() {
+      },
+
+      _icon: function() {
+        this.localsicon = 'locals-icons:' + this.icon;
+      },
+
+      _notnormal:function(){
+        if (this.verysmall | this.veryverysmall | this.small | this.big | this.xl | this.xxl) {
+        this.normal = false;
+        }
+      },
+
+      _iconcolor: function(iconcolor) {
+        // console.log(this.iconcolor);
+        this.iconcolorcomplete = 'var(--locals-'+this.iconcolor+')';
+        this.customStyle['--icon-color'] = this.iconcolorcomplete;
+        this.updateStyles();
+      }
+
+
+    });
+  </script>
+</dom-module>

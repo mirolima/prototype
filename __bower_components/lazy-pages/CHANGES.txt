@@ -1,0 +1,20 @@
+0.8.5
+==============
+- Removed on-demand element definition loading <link> inside template. It did not work in IE.
+
+0.8.4
+==============
+- added `lazy-pages-transition-ready` event if you need to interact with page before it is shown
+- debounce rescueSelection to prevent infinite loops
+- timeout transition.startAnimation from dom-change, makes animations better for lazily loaded
+
+0.8.3
+==============
+- bugfix: attrForSelected was not working
+- iron-pages compatibility: added selectedItem
+- feature: rescueSelection: selection to use if last one was bad
+
+0.8.2
+==============
+- fix for http://stackoverflow.com/questions/32639639/ios-9-mobile-safari-has-a-blinking-bug-with-transform-scale3d-and-translate3d
+  ios animation janky

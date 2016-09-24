@@ -1,0 +1,38 @@
+{
+  "name": "locals-scroller",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-scroller.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-pages": "^1.0.7",
+    "scrollreveal": "^3.1.4",
+    "locals-objectcollection": "https://github.com/locals-world/locals-objectcollection.git"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  },
+  "_release": "8c16412918",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "8c16412918a711dccc70cb864501f929b4a8897b"
+  },
+  "_source": "https://github.com/locals-world/locals-scroller.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/locals-world/locals-scroller.git"
+}

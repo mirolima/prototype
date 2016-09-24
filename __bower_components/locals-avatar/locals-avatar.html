@@ -1,0 +1,1011 @@
+
+
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-object/locals-object.html">
+<link rel="import" href="../locals-object/locals-dataobject.html">
+
+<!--
+Locals avatar : male avatar.
+
+Example:
+
+    <locals-avatar
+      visualstate="{{visualstate}}"
+      datastate="{{datastate}}"
+      on-visual-state-changed="visualstateupdated"
+      on-data-state-changed="datastateupdated">     
+    </locals-avatar>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-avatar">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+    .avatartotal {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      width: 100%;
+      height: 100%;
+    }
+/*    .avatarbg {
+      width: var(--avatarbg-size);
+      height: var(--avatarbg-size);
+      margin: var(--avatararea-margin);
+      border-radius: 50%;
+      background-position: center;
+      background: url(../../images/locals-bg3.png);
+      background-size: var(--bg-size);
+    }*/
+
+    .avatarbg {
+      width: 84%;
+      height: 84%;
+      margin: 8%;
+      border-radius: 50%;
+      background-position: center;
+      background: url(../../images/locals-bg3.png);
+      background-size: auto 100%;
+    }
+
+    .absolutepos {
+      position: absolute;
+    }
+    </style>
+
+  <template is="dom-if" if="{{!_is(renderstate,'editstate')}}">
+    <div class="avatartotal">
+   <locals-object class="absolutepos" on-internalstatechange="_fixdata" config="[[config]]" objectdata="[[objectdata]]" state="{{visualstate}}" on-state-changed="_visualstatechanged" renderstate="{{renderstate}}"></locals-object>
+    <div class="avatarbg"></div>
+    </div>
+    </template>
+
+  <template is="dom-if" if="{{_is(renderstate,'editstate')}}">
+   <locals-object on-internalstatechange="_fixdata" config="[[config]]" objectdata="[[objectdata]]" state="{{visualstate}}" on-state-changed="_visualstatechanged" renderstate="{{renderstate}}"></locals-object>
+   </template>
+
+<!--    <locals-dataobject id="ldataobject" hashfunction="{{hashfunction}}" on-state-changed="_datastatechanged" objectdata="[[objectdata]]" state="{{datastate}}" config="[[dataconfig]]" renderstate="{{renderstate}}"></locals-dataobject>
+ -->
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-avatar',
+
+      properties: {
+        _version: {
+          type: String,
+          value: '0.0.1'
+        },
+        /* Configuration of the avatar's visual state.
+        can be set on initialisation - data is returned to this variable.
+        */
+        // visualstate: {
+        //   type: Array,
+        //   notify: true,
+        //   value:
+
+        //     [
+        //     [0, 0],
+        //     [0, 0],
+        //     [0, 0],
+        //     [0, 0],
+        //     [0, 0],
+        //     [0, 0],
+        //     [0, 0]
+        //   ]
+
+        // },
+        /* configuration of the object's data state.
+         can be set on initialisation - data is returned to this variable
+        */
+        datastate: {
+          type: Object,
+          notify: true,
+          value: {
+            "firstname": "",
+            "lastname": "",
+            "birthplace": "",
+            "birthdate": ""
+          },
+
+        },
+
+        renderstate: {
+          type: String,
+          observer: '_renderstate'
+        },
+
+        editavatar: {
+          type:Boolean,
+          value:false
+        },
+
+
+        objectdata: {
+          type: Object
+        },
+        hashfunction: {
+          type: Function
+        },
+       sizeview: {
+        type: String,
+        observer: '_sizeview'
+        },     
+      },
+
+      _newblock: function(){
+       
+      },
+
+      _is: function(a, b) {
+        if (b === undefined){
+          b = true;
+        }
+        return a === b;
+      },
+
+
+      _fixdata: function(e){
+        // console.log('fix data',e.detail);
+
+        // console.log('color of body',e.detail[this.layerindex['body']][1]);
+        // console.log('color of head',e.detail[this.layerindex['head']][1]);
+
+        // copy head color to body color
+        if (e.detail[this.layerindex['head']][1] != e.detail[this.layerindex['body']][1]){
+          e.detail[this.layerindex['head']][1] = e.detail[this.layerindex['body']][1];
+          this.visualstate = e.detail;
+        }
+
+      },
+
+      // Element Lifecycle
+      ready: function() {
+
+        this.dataconfig = {
+          fields: [
+            {
+              name: "firstname",
+              type: "input",
+              label: "Firstname"
+            }, {
+              name: "lastname",
+              type: "input",
+              label: "Lastname"
+            }, {
+              name: "birthplace",
+              type: "input",
+              label: "Birthplace"
+            }, {
+              name: "birthdate",
+              type: "input",
+              label: "Birthdate"
+            },
+          ]
+        };
+
+        this.config = 
+
+// { layers: 
+//    [ { name: 'body',
+//        icon: this.resolveUrl("./images/avatarmale/body-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/body-icon-selected.png"),
+//        variants: [ 'male' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { 'male-blue': this.resolveUrl("./images/avatarmale/0-avatar-body-male-blue.png"),
+//           'male-darkblue': this.resolveUrl("./images/avatarmale/0-avatar-body-male-darkblue.png"),
+//           'male-green': this.resolveUrl("./images/avatarmale/0-avatar-body-male-green.png"),
+//           'male-lightblue': this.resolveUrl("./images/avatarmale/0-avatar-body-male-lightblue.png"),
+//           'male-purple': this.resolveUrl("./images/avatarmale/0-avatar-body-male-purple.png"),
+//           'male-red': this.resolveUrl("./images/avatarmale/0-avatar-body-male-red.png"),
+//           'male-white': this.resolveUrl("./images/avatarmale/0-avatar-body-male-white.png"),
+//           'male-yellow': this.resolveUrl("./images/avatarmale/0-avatar-body-male-yellow.png") } },
+//      { name: 'shoes',
+//        icon: this.resolveUrl("./images/avatarmale/shoes-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/shoes-icon-selected.png"),
+//        variants: [ '0plain', '1arado', '2kurgan', '3flipflop', '4empty' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { '0plain-blue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-blue.png"),
+//           '0plain-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-darkblue.png"),
+//           '0plain-green': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-green.png"),
+//           '0plain-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-lightblue.png"),
+//           '0plain-purple': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-purple.png"),
+//           '0plain-red': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-red.png"),
+//           '0plain-white': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-white.png"),
+//           '0plain-yellow': this.resolveUrl("./images/avatarmale/1-avatar-shoes-0plain-yellow.png"),
+//           '1arado-blue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-blue.png"),
+//           '1arado-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-darkblue.png"),
+//           '1arado-green': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-green.png"),
+//           '1arado-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-lightblue.png"),
+//           '1arado-purple': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-purple.png"),
+//           '1arado-red': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-red.png"),
+//           '1arado-white': this.resolveUrl("./images/avatarmale/1-avatar-shoes-1arado-white.png"),
+//           '2kurgan-blue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-blue.png"),
+//           '2kurgan-green': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-green.png"),
+//           '2kurgan-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-lightblue.png"),
+//           '2kurgan-purple': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-purple.png"),
+//           '2kurgan-red': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-red.png"),
+//           '2kurgan-white': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-white.png"),
+//           '2kurgan-yellow': this.resolveUrl("./images/avatarmale/1-avatar-shoes-2kurgan-yellow.png"),
+//           '3flipflop-blue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-blue.png"),
+//           '3flipflop-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-darkblue.png"),
+//           '3flipflop-green': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-green.png"),
+//           '3flipflop-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-lightblue.png"),
+//           '3flipflop-purple': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-purple.png"),
+//           '3flipflop-red': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-red.png"),
+//           '3flipflop-white': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-white.png"),
+//           '3flipflop-yellow': this.resolveUrl("./images/avatarmale/1-avatar-shoes-3flipflop-yellow.png"),
+//           '4empty-blue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-blue.png"),
+//           '4empty-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-darkblue.png"),
+//           '4empty-green': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-green.png"),
+//           '4empty-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-lightblue.png"),
+//           '4empty-purple': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-purple.png"),
+//           '4empty-red': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-red.png"),
+//           '4empty-white': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-white.png"),
+//           '4empty-yellow': this.resolveUrl("./images/avatarmale/1-avatar-shoes-4empty-yellow.png") } },
+//      { name: 'bottom',
+//        icon: this.resolveUrl("./images/avatarmale/bottom-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/bottom-icon-selected.png"),
+//        variants: [ '0skilo', '1mara', '2shazam', '3empty' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { '0skilo-blue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-blue.png"),
+//           '0skilo-darkblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-darkblue.png"),
+//           '0skilo-green': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-green.png"),
+//           '0skilo-lightblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-lightblue.png"),
+//           '0skilo-purple': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-purple.png"),
+//           '0skilo-red': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-red.png"),
+//           '0skilo-white': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-white.png"),
+//           '0skilo-yellow': this.resolveUrl("./images/avatarmale/2-avatar-bottom-0skilo-yellow.png"),
+//           '1mara-blue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-blue.png"),
+//           '1mara-darkblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-darkblue.png"),
+//           '1mara-green': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-green.png"),
+//           '1mara-lightblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-lightblue.png"),
+//           '1mara-purple': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-purple.png"),
+//           '1mara-red': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-red.png"),
+//           '1mara-white': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-white.png"),
+//           '1mara-yellow': this.resolveUrl("./images/avatarmale/2-avatar-bottom-1mara-yellow.png"),
+//           '2shazam-blue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-blue.png"),
+//           '2shazam-darkblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-darkblue.png"),
+//           '2shazam-green': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-green.png"),
+//           '2shazam-lightblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-lightblue.png"),
+//           '2shazam-purple': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-purple.png"),
+//           '2shazam-red': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-red.png"),
+//           '2shazam-white': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-white.png"),
+//           '2shazam-yellow': this.resolveUrl("./images/avatarmale/2-avatar-bottom-2shazam-yellow.png"),
+//           '3empty-blue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-blue.png"),
+//           '3empty-darkblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-darkblue.png"),
+//           '3empty-green': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-green.png"),
+//           '3empty-lightblue': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-lightblue.png"),
+//           '3empty-purple': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-purple.png"),
+//           '3empty-red': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-red.png"),
+//           '3empty-white': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-white.png"),
+//           '3empty-yellow': this.resolveUrl("./images/avatarmale/2-avatar-bottom-3empty-yellow.png") } },
+//      { name: 'top',
+//        icon: this.resolveUrl("./images/avatarmale/top-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/top-icon-selected.png"),
+//        variants: [ '0loma', '1miikelsen', '2rico', '3mrsmith', '4sheek', '5empty' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { '0loma-blue': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-blue.png"),
+//           '0loma-darkblue': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-darkblue.png"),
+//           '0loma-green': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-green.png"),
+//           '0loma-lightblue': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-lightblue.png"),
+//           '0loma-purple': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-purple.png"),
+//           '0loma-red': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-red.png"),
+//           '0loma-white': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-white.png"),
+//           '0loma-yellow': this.resolveUrl("./images/avatarmale/3-avatar-top-0loma-yellow.png"),
+//           '1miikelsen-blue': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-blue.png"),
+//           '1miikelsen-darkblue': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-darkblue.png"),
+//           '1miikelsen-green': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-green.png"),
+//           '1miikelsen-lightblue': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-lightblue.png"),
+//           '1miikelsen-purple': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-purple.png"),
+//           '1miikelsen-red': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-red.png"),
+//           '1miikelsen-white': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-white.png"),
+//           '1miikelsen-yellow': this.resolveUrl("./images/avatarmale/3-avatar-top-1miikelsen-yellow.png"),
+//           '2rico-blue': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-blue.png"),
+//           '2rico-darkblue': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-darkblue.png"),
+//           '2rico-green': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-green.png"),
+//           '2rico-lightblue': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-lightblue.png"),
+//           '2rico-purple': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-purple.png"),
+//           '2rico-red': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-red.png"),
+//           '2rico-white': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-white.png"),
+//           '2rico-yellow': this.resolveUrl("./images/avatarmale/3-avatar-top-2rico-yellow.png"),
+//           '3mrsmith-blue': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-blue.png"),
+//           '3mrsmith-darkblue': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-darkblue.png"),
+//           '3mrsmith-green': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-green.png"),
+//           '3mrsmith-lightblue': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-lightblue.png"),
+//           '3mrsmith-purple': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-purple.png"),
+//           '3mrsmith-red': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-red.png"),
+//           '3mrsmith-white': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-white.png"),
+//           '3mrsmith-yellow': this.resolveUrl("./images/avatarmale/3-avatar-top-3mrsmith-yellow.png"),
+//           '4sheek-blue': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-blue.png"),
+//           '4sheek-green': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-green.png"),
+//           '4sheek-lightblue': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-lightblue.png"),
+//           '4sheek-purple': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-purple.png"),
+//           '4sheek-red': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-red.png"),
+//           '4sheek-white': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-white.png"),
+//           '4sheek-yellow': this.resolveUrl("./images/avatarmale/3-avatar-top-4sheek-yellow.png"),
+//           '5empty-blue': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-blue.png"),
+//           '5empty-darkblue': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-darkblue.png"),
+//           '5empty-green': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-green.png"),
+//           '5empty-lightblue': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-lightblue.png"),
+//           '5empty-purple': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-purple.png"),
+//           '5empty-red': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-red.png"),
+//           '5empty-white': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-white.png"),
+//           '5empty-yellow': this.resolveUrl("./images/avatarmale/3-avatar-top-5empty-yellow.png") } },
+//      { name: 'head',
+//        icon: this.resolveUrl("./images/avatarmale/head-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/head-icon-selected.png"),
+//        variants: [ 'male' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { 'male-blue': this.resolveUrl("./images/avatarmale/4-avatar-head-male-blue.png"),
+//           'male-darkblue': this.resolveUrl("./images/avatarmale/4-avatar-head-male-darkblue.png"),
+//           'male-green': this.resolveUrl("./images/avatarmale/4-avatar-head-male-green.png"),
+//           'male-lightblue': this.resolveUrl("./images/avatarmale/4-avatar-head-male-lightblue.png"),
+//           'male-purple': this.resolveUrl("./images/avatarmale/4-avatar-head-male-purple.png"),
+//           'male-red': this.resolveUrl("./images/avatarmale/4-avatar-head-male-red.png"),
+//           'male-white': this.resolveUrl("./images/avatarmale/4-avatar-head-male-white.png"),
+//           'male-yellow': this.resolveUrl("./images/avatarmale/4-avatar-head-male-yellow.png") } },
+//      { name: 'facemale',
+//        icon: this.resolveUrl("./images/avatarmale/facemale-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/facemale-icon-selected.png"),
+//        variants: [ 'nooptions' ],
+//        colors: [ 'nocolors' ],
+//        images: { 'nooptions-nocolors': this.resolveUrl("./images/avatarmale/5-avatar-facemale-nooptions-nocolors.png") } },
+//      { name: 'glasses',
+//        icon: this.resolveUrl("./images/avatarmale/glasses-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/glasses-icon-selected.png"),
+//        variants: [ '0empty', '1happo' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { '0empty-blue': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-blue.png"),
+//           '0empty-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-darkblue.png"),
+//           '0empty-green': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-green.png"),
+//           '0empty-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-lightblue.png"),
+//           '0empty-purple': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-purple.png"),
+//           '0empty-red': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-red.png"),
+//           '0empty-white': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-white.png"),
+//           '0empty-yellow': this.resolveUrl("./images/avatarmale/6-avatar-glasses-0empty-yellow.png"),
+//           '1happo-blue': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-blue.png"),
+//           '1happo-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-darkblue.png"),
+//           '1happo-green': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-green.png"),
+//           '1happo-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-lightblue.png"),
+//           '1happo-purple': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-purple.png"),
+//           '1happo-red': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-red.png"),
+//           '1happo-white': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-white.png"),
+//           '1happo-yellow': this.resolveUrl("./images/avatarmale/6-avatar-glasses-1happo-yellow.png") } },
+//      { name: 'beard',
+//        icon: this.resolveUrl("./images/avatarmale/beard-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/beard-icon-selected.png"),
+//        variants: [ '0empty', '1lebu', '2beadr', '3bobiar', '4kahlem' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { '0empty-blue': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-blue.png"),
+//           '0empty-darkblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-darkblue.png"),
+//           '0empty-green': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-green.png"),
+//           '0empty-lightblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-lightblue.png"),
+//           '0empty-purple': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-purple.png"),
+//           '0empty-red': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-red.png"),
+//           '0empty-white': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-white.png"),
+//           '0empty-yellow': this.resolveUrl("./images/avatarmale/7-avatar-beard-0empty-yellow.png"),
+//           '1lebu-blue': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-blue.png"),
+//           '1lebu-darkblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-darkblue.png"),
+//           '1lebu-green': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-green.png"),
+//           '1lebu-lightblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-lightblue.png"),
+//           '1lebu-purple': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-purple.png"),
+//           '1lebu-red': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-red.png"),
+//           '1lebu-white': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-white.png"),
+//           '1lebu-yellow': this.resolveUrl("./images/avatarmale/7-avatar-beard-1lebu-yellow.png"),
+//           '2beadr-blue': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-blue.png"),
+//           '2beadr-darkblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-darkblue.png"),
+//           '2beadr-green': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-green.png"),
+//           '2beadr-lightblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-lightblue.png"),
+//           '2beadr-purple': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-purple.png"),
+//           '2beadr-red': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-red.png"),
+//           '2beadr-white': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-white.png"),
+//           '2beadr-yellow': this.resolveUrl("./images/avatarmale/7-avatar-beard-2beadr-yellow.png"),
+//           '3bobiar-blue': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-blue.png"),
+//           '3bobiar-darkblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-darkblue.png"),
+//           '3bobiar-green': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-green.png"),
+//           '3bobiar-lightblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-lightblue.png"),
+//           '3bobiar-purple': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-purple.png"),
+//           '3bobiar-red': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-red.png"),
+//           '3bobiar-white': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-white.png"),
+//           '3bobiar-yellow': this.resolveUrl("./images/avatarmale/7-avatar-beard-3bobiar-yellow.png"),
+//           '4kahlem-blue': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-blue.png"),
+//           '4kahlem-darkblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-darkblue.png"),
+//           '4kahlem-green': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-green.png"),
+//           '4kahlem-lightblue': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-lightblue.png"),
+//           '4kahlem-purple': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-purple.png"),
+//           '4kahlem-red': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-red.png"),
+//           '4kahlem-white': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-white.png"),
+//           '4kahlem-yellow': this.resolveUrl("./images/avatarmale/7-avatar-beard-4kahlem-yellow.png") } },
+//      { name: 'snit',
+//        icon: this.resolveUrl("./images/avatarmale/snit-icon.png"),
+//        iconselected: this.resolveUrl("./images/avatarmale/snit-icon-selected.png"),
+//        variants: 
+//         [ '0empty',
+//           '1capucinus',
+//           '2kaapori',
+//           '3albifrons',
+//           '4apella',
+//           '5ustus',
+//           '6flavius',
+//           '7vanzolini' ],
+//        colors: 
+//         [ 'blue',
+//           'darkblue',
+//           'green',
+//           'lightblue',
+//           'purple',
+//           'red',
+//           'white',
+//           'yellow' ],
+//        images: 
+//         { '0empty-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-blue.png"),
+//           '0empty-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-darkblue.png"),
+//           '0empty-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-green.png"),
+//           '0empty-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-lightblue.png"),
+//           '0empty-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-purple.png"),
+//           '0empty-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-red.png"),
+//           '0empty-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-white.png"),
+//           '0empty-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-0empty-yellow.png"),
+//           '1capucinus-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-blue.png"),
+//           '1capucinus-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-darkblue.png"),
+//           '1capucinus-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-green.png"),
+//           '1capucinus-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-lightblue.png"),
+//           '1capucinus-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-purple.png"),
+//           '1capucinus-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-red.png"),
+//           '1capucinus-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-white.png"),
+//           '1capucinus-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-1capucinus-yellow.png"),
+//           '2kaapori-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-blue.png"),
+//           '2kaapori-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-darkblue.png"),
+//           '2kaapori-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-green.png"),
+//           '2kaapori-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-lightblue.png"),
+//           '2kaapori-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-purple.png"),
+//           '2kaapori-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-red.png"),
+//           '2kaapori-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-white.png"),
+//           '2kaapori-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-2kaapori-yellow.png"),
+//           '3albifrons-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-blue.png"),
+//           '3albifrons-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-darkblue.png"),
+//           '3albifrons-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-green.png"),
+//           '3albifrons-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-lightblue.png"),
+//           '3albifrons-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-purple.png"),
+//           '3albifrons-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-red.png"),
+//           '3albifrons-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-white.png"),
+//           '3albifrons-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-3albifrons-yellow.png"),
+//           '4apella-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-blue.png"),
+//           '4apella-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-darkblue.png"),
+//           '4apella-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-green.png"),
+//           '4apella-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-lightblue.png"),
+//           '4apella-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-purple.png"),
+//           '4apella-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-red.png"),
+//           '4apella-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-white.png"),
+//           '4apella-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-4apella-yellow.png"),
+//           '5ustus-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-blue.png"),
+//           '5ustus-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-darkblue.png"),
+//           '5ustus-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-green.png"),
+//           '5ustus-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-lightblue.png"),
+//           '5ustus-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-purple.png"),
+//           '5ustus-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-red.png"),
+//           '5ustus-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-white.png"),
+//           '5ustus-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-5ustus-yellow.png"),
+//           '6flavius-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-blue.png"),
+//           '6flavius-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-darkblue.png"),
+//           '6flavius-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-green.png"),
+//           '6flavius-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-lightblue.png"),
+//           '6flavius-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-purple.png"),
+//           '6flavius-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-red.png"),
+//           '6flavius-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-white.png"),
+//           '6flavius-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-6flavius-yellow.png"),
+//           '7vanzolini-blue': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-blue.png"),
+//           '7vanzolini-darkblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-darkblue.png"),
+//           '7vanzolini-green': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-green.png"),
+//           '7vanzolini-lightblue': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-lightblue.png"),
+//           '7vanzolini-purple': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-purple.png"),
+//           '7vanzolini-red': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-red.png"),
+//           '7vanzolini-white': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-white.png"),
+//           '7vanzolini-yellow': this.resolveUrl("./images/avatarmale/8-avatar-snit-7vanzolini-yellow.png") } } ],
+//   defaultstate: 
+//    [ [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ],
+//      [ 0, 0 ] ] }
+{ layers: 
+   [ { name: 'body',
+       icon: this.resolveUrl("./images/avatarmale/body-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/body-icon-selected.png"),
+       variants: [ 'male' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'white',
+          'yellow' ],
+       images: 
+        { 'male-blue': this.resolveUrl("./images/avatarmale/0-avatar-body-male-blue.png"),
+          'male-darkblue': this.resolveUrl("./images/avatarmale/0-avatar-body-male-darkblue.png"),
+          'male-green': this.resolveUrl("./images/avatarmale/0-avatar-body-male-green.png"),
+          'male-lightblue': this.resolveUrl("./images/avatarmale/0-avatar-body-male-lightblue.png"),
+          'male-purple': this.resolveUrl("./images/avatarmale/0-avatar-body-male-purple.png"),
+          'male-red': this.resolveUrl("./images/avatarmale/0-avatar-body-male-red.png"),
+          'male-white': this.resolveUrl("./images/avatarmale/0-avatar-body-male-white.png"),
+          'male-yellow': this.resolveUrl("./images/avatarmale/0-avatar-body-male-yellow.png") } },
+     { name: 'top',
+       icon: this.resolveUrl("./images/avatarmale/top-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/top-icon-selected.png"),
+       variants: [ '0loma', '1miikelsen', '2rico', '3mrsmith', '4sheek', '5empty' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'white',
+          'yellow' ],
+       images: 
+        { '0loma-blue': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-blue.png"),
+          '0loma-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-darkblue.png"),
+          '0loma-green': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-green.png"),
+          '0loma-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-lightblue.png"),
+          '0loma-purple': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-purple.png"),
+          '0loma-red': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-red.png"),
+          '0loma-white': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-white.png"),
+          '0loma-yellow': this.resolveUrl("./images/avatarmale/1-avatar-top-0loma-yellow.png"),
+          '1miikelsen-blue': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-blue.png"),
+          '1miikelsen-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-darkblue.png"),
+          '1miikelsen-green': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-green.png"),
+          '1miikelsen-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-lightblue.png"),
+          '1miikelsen-purple': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-purple.png"),
+          '1miikelsen-red': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-red.png"),
+          '1miikelsen-white': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-white.png"),
+          '1miikelsen-yellow': this.resolveUrl("./images/avatarmale/1-avatar-top-1miikelsen-yellow.png"),
+          '2rico-blue': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-blue.png"),
+          '2rico-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-darkblue.png"),
+          '2rico-green': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-green.png"),
+          '2rico-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-lightblue.png"),
+          '2rico-purple': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-purple.png"),
+          '2rico-red': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-red.png"),
+          '2rico-white': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-white.png"),
+          '2rico-yellow': this.resolveUrl("./images/avatarmale/1-avatar-top-2rico-yellow.png"),
+          '3mrsmith-blue': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-blue.png"),
+          '3mrsmith-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-darkblue.png"),
+          '3mrsmith-green': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-green.png"),
+          '3mrsmith-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-lightblue.png"),
+          '3mrsmith-purple': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-purple.png"),
+          '3mrsmith-red': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-red.png"),
+          '3mrsmith-white': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-white.png"),
+          '3mrsmith-yellow': this.resolveUrl("./images/avatarmale/1-avatar-top-3mrsmith-yellow.png"),
+          '4sheek-blue': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-blue.png"),
+          '4sheek-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-darkblue.png"),
+          '4sheek-green': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-green.png"),
+          '4sheek-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-lightblue.png"),
+          '4sheek-purple': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-purple.png"),
+          '4sheek-red': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-red.png"),
+          '4sheek-white': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-white.png"),
+          '4sheek-yellow': this.resolveUrl("./images/avatarmale/1-avatar-top-4sheek-yellow.png"),
+          '5empty-blue': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-blue.png"),
+          '5empty-darkblue': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-darkblue.png"),
+          '5empty-green': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-green.png"),
+          '5empty-lightblue': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-lightblue.png"),
+          '5empty-purple': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-purple.png"),
+          '5empty-red': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-red.png"),
+          '5empty-white': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-white.png"),
+          '5empty-yellow': this.resolveUrl("./images/avatarmale/1-avatar-top-5empty-yellow.png") } },
+     { name: 'head',
+       icon: this.resolveUrl("./images/avatarmale/head-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/head-icon-selected.png"),
+       variants: [ 'male' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'white',
+          'yellow' ],
+       images: 
+        { 'male-blue': this.resolveUrl("./images/avatarmale/2-avatar-head-male-blue.png"),
+          'male-darkblue': this.resolveUrl("./images/avatarmale/2-avatar-head-male-darkblue.png"),
+          'male-green': this.resolveUrl("./images/avatarmale/2-avatar-head-male-green.png"),
+          'male-lightblue': this.resolveUrl("./images/avatarmale/2-avatar-head-male-lightblue.png"),
+          'male-purple': this.resolveUrl("./images/avatarmale/2-avatar-head-male-purple.png"),
+          'male-red': this.resolveUrl("./images/avatarmale/2-avatar-head-male-red.png"),
+          'male-white': this.resolveUrl("./images/avatarmale/2-avatar-head-male-white.png"),
+          'male-yellow': this.resolveUrl("./images/avatarmale/2-avatar-head-male-yellow.png") } },
+     { name: 'facemale',
+       icon: this.resolveUrl("./images/avatarmale/facemale-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/facemale-icon-selected.png"),
+       variants: [ 'nooptions' ],
+       colors: [ 'nocolors' ],
+       images: { 'nooptions-nocolors': this.resolveUrl("./images/avatarmale/3-avatar-facemale-nooptions-nocolors.png") } },
+     { name: 'glasses',
+       icon: this.resolveUrl("./images/avatarmale/glasses-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/glasses-icon-selected.png"),
+       variants: [ '0empty', '1happo' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'white',
+          'yellow' ],
+       images: 
+        { '0empty-blue': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-blue.png"),
+          '0empty-darkblue': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-darkblue.png"),
+          '0empty-green': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-green.png"),
+          '0empty-lightblue': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-lightblue.png"),
+          '0empty-purple': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-purple.png"),
+          '0empty-red': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-red.png"),
+          '0empty-white': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-white.png"),
+          '0empty-yellow': this.resolveUrl("./images/avatarmale/4-avatar-glasses-0empty-yellow.png"),
+          '1happo-blue': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-blue.png"),
+          '1happo-darkblue': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-darkblue.png"),
+          '1happo-green': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-green.png"),
+          '1happo-lightblue': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-lightblue.png"),
+          '1happo-purple': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-purple.png"),
+          '1happo-red': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-red.png"),
+          '1happo-white': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-white.png"),
+          '1happo-yellow': this.resolveUrl("./images/avatarmale/4-avatar-glasses-1happo-yellow.png") } },
+     { name: 'beard',
+       icon: this.resolveUrl("./images/avatarmale/beard-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/beard-icon-selected.png"),
+       variants: [ '0empty', '1lebu', '2beadr', '3bobiar', '4kahlem' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'white',
+          'yellow' ],
+       images: 
+        { '0empty-blue': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-blue.png"),
+          '0empty-darkblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-darkblue.png"),
+          '0empty-green': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-green.png"),
+          '0empty-lightblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-lightblue.png"),
+          '0empty-purple': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-purple.png"),
+          '0empty-red': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-red.png"),
+          '0empty-white': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-white.png"),
+          '0empty-yellow': this.resolveUrl("./images/avatarmale/5-avatar-beard-0empty-yellow.png"),
+          '1lebu-blue': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-blue.png"),
+          '1lebu-darkblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-darkblue.png"),
+          '1lebu-green': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-green.png"),
+          '1lebu-lightblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-lightblue.png"),
+          '1lebu-purple': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-purple.png"),
+          '1lebu-red': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-red.png"),
+          '1lebu-white': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-white.png"),
+          '1lebu-yellow': this.resolveUrl("./images/avatarmale/5-avatar-beard-1lebu-yellow.png"),
+          '2beadr-blue': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-blue.png"),
+          '2beadr-darkblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-darkblue.png"),
+          '2beadr-green': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-green.png"),
+          '2beadr-lightblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-lightblue.png"),
+          '2beadr-purple': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-purple.png"),
+          '2beadr-red': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-red.png"),
+          '2beadr-white': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-white.png"),
+          '2beadr-yellow': this.resolveUrl("./images/avatarmale/5-avatar-beard-2beadr-yellow.png"),
+          '3bobiar-blue': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-blue.png"),
+          '3bobiar-darkblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-darkblue.png"),
+          '3bobiar-green': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-green.png"),
+          '3bobiar-lightblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-lightblue.png"),
+          '3bobiar-purple': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-purple.png"),
+          '3bobiar-red': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-red.png"),
+          '3bobiar-white': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-white.png"),
+          '3bobiar-yellow': this.resolveUrl("./images/avatarmale/5-avatar-beard-3bobiar-yellow.png"),
+          '4kahlem-blue': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-blue.png"),
+          '4kahlem-darkblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-darkblue.png"),
+          '4kahlem-green': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-green.png"),
+          '4kahlem-lightblue': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-lightblue.png"),
+          '4kahlem-purple': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-purple.png"),
+          '4kahlem-red': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-red.png"),
+          '4kahlem-white': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-white.png"),
+          '4kahlem-yellow': this.resolveUrl("./images/avatarmale/5-avatar-beard-4kahlem-yellow.png") } },
+     { name: 'snit',
+       icon: this.resolveUrl("./images/avatarmale/snit-icon.png"),
+       iconselected: this.resolveUrl("./images/avatarmale/snit-icon-selected.png"),
+       variants: 
+        [ '0empty',
+          '1capucinus',
+          '2kaapori',
+          '3albifrons',
+          '4apella',
+          '5ustus',
+          '6flavius',
+          '7vanzolini' ],
+       colors: 
+        [ 'blue',
+          'darkblue',
+          'green',
+          'lightblue',
+          'purple',
+          'red',
+          'white',
+          'yellow' ],
+       images: 
+        { '0empty-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-blue.png"),
+          '0empty-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-darkblue.png"),
+          '0empty-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-green.png"),
+          '0empty-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-lightblue.png"),
+          '0empty-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-purple.png"),
+          '0empty-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-red.png"),
+          '0empty-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-white.png"),
+          '0empty-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-0empty-yellow.png"),
+          '1capucinus-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-blue.png"),
+          '1capucinus-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-darkblue.png"),
+          '1capucinus-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-green.png"),
+          '1capucinus-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-lightblue.png"),
+          '1capucinus-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-purple.png"),
+          '1capucinus-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-red.png"),
+          '1capucinus-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-white.png"),
+          '1capucinus-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-1capucinus-yellow.png"),
+          '2kaapori-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-blue.png"),
+          '2kaapori-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-darkblue.png"),
+          '2kaapori-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-green.png"),
+          '2kaapori-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-lightblue.png"),
+          '2kaapori-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-purple.png"),
+          '2kaapori-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-red.png"),
+          '2kaapori-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-white.png"),
+          '2kaapori-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-2kaapori-yellow.png"),
+          '3albifrons-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-blue.png"),
+          '3albifrons-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-darkblue.png"),
+          '3albifrons-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-green.png"),
+          '3albifrons-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-lightblue.png"),
+          '3albifrons-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-purple.png"),
+          '3albifrons-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-red.png"),
+          '3albifrons-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-white.png"),
+          '3albifrons-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-3albifrons-yellow.png"),
+          '4apella-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-blue.png"),
+          '4apella-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-darkblue.png"),
+          '4apella-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-green.png"),
+          '4apella-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-lightblue.png"),
+          '4apella-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-purple.png"),
+          '4apella-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-red.png"),
+          '4apella-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-white.png"),
+          '4apella-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-4apella-yellow.png"),
+          '5ustus-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-blue.png"),
+          '5ustus-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-darkblue.png"),
+          '5ustus-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-green.png"),
+          '5ustus-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-lightblue.png"),
+          '5ustus-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-purple.png"),
+          '5ustus-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-red.png"),
+          '5ustus-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-white.png"),
+          '5ustus-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-5ustus-yellow.png"),
+          '6flavius-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-blue.png"),
+          '6flavius-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-darkblue.png"),
+          '6flavius-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-green.png"),
+          '6flavius-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-lightblue.png"),
+          '6flavius-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-purple.png"),
+          '6flavius-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-red.png"),
+          '6flavius-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-white.png"),
+          '6flavius-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-6flavius-yellow.png"),
+          '7vanzolini-blue': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-blue.png"),
+          '7vanzolini-darkblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-darkblue.png"),
+          '7vanzolini-green': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-green.png"),
+          '7vanzolini-lightblue': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-lightblue.png"),
+          '7vanzolini-purple': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-purple.png"),
+          '7vanzolini-red': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-red.png"),
+          '7vanzolini-white': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-white.png"),
+          '7vanzolini-yellow': this.resolveUrl("./images/avatarmale/6-avatar-snit-7vanzolini-yellow.png") } } ],
+  defaultstate: 
+   [ [ 0, 0 ],
+     [ 0, 0 ],
+     [ 0, 0 ],
+     [ 0, 0 ],
+     [ 0, 0 ],
+     [ 0, 0 ],
+     [ 0, 0 ] ] }
+
+
+
+
+
+;
+
+  this.layerindex = {};
+
+    var self= this;
+      // make some layers invisible
+      this.config.layers = this.config.layers.map(function(layer,index){
+        self.layerindex[layer.name] = index;
+        if (layer.name == 'head' || layer.name == 'facemale'){
+          layer.hidden = true;
+        }
+        return layer;
+      });
+
+
+        if (!this.visualstate) {
+          // default state
+          this.visualstate = this.config.defaultstate;
+        }
+
+        if (!this.datastate) {
+          this.datastate = {
+              "firstname": "",
+              "lastname": "",
+              "birthdate": "",
+              "birthplace": ""
+          }
+        }
+
+
+      },
+
+      attached: function() {
+        var user = document.querySelector('locals-user');
+        var self = this;
+        //debugger;
+        // if (this.renderstate !== 'dataview'){
+        //   user.addEventListener('newblock', function() {
+        //     var validations = self.$.ldataobject.getValidations();
+        //   });          
+        // }
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      _visualstatechanged: function(e) {
+        //console.log('Visual state changed');
+        this.fire('visual-state-changed',e.detail);
+      },
+
+      _datastatechanged: function(e) {
+        //console.log('Data state changed');
+        this.fire('data-state-changed',e.detail);
+      },
+
+
+_sizeview: function(){
+    if (this.renderstate == 'visual'){
+    switch(this.sizeview) {
+      case 'phone':
+      this.customStyle['--avatararea-margin'] = '10px';
+      this.customStyle['--avatarbg-size'] = '100px';
+      this.customStyle['--bg-size'] = 'auto 100px';
+      this.updateStyles();
+      break;
+      case 'desktop':
+      this.customStyle['--avatararea-margin'] = '11px';
+      this.customStyle['--avatarbg-size'] = '110px';
+      this.customStyle['--bg-size'] = 'auto 110px';
+
+      this.updateStyles();
+      break;
+      case 'xlarge':
+      this.customStyle['--avatararea-margin'] = '15px';
+      this.customStyle['--avatarbg-size'] = '150px';
+      this.customStyle['--bg-size'] = 'auto 150px';
+
+      this.updateStyles();
+      break;
+      default:
+    }
+  };
+    if (this.renderstate == 'inprofile'){
+    switch(this.sizeview) {
+      case 'phone':
+      this.customStyle['--avatararea-margin'] = '10px';
+      this.customStyle['--avatarbg-size'] = '120px';
+      this.customStyle['--bg-size'] = 'auto 120px';
+      this.updateStyles();
+      break;
+      case 'desktop':
+      this.customStyle['--avatararea-margin'] = '11px';
+      this.customStyle['--avatarbg-size'] = '110px';
+      this.customStyle['--bg-size'] = 'auto 110px';
+
+      this.updateStyles();
+      break;
+      case 'xlarge':
+      this.customStyle['--avatararea-margin'] = '15px';
+      this.customStyle['--avatarbg-size'] = '150px';
+      this.customStyle['--bg-size'] = 'auto 150px';
+
+      this.updateStyles();
+      break;
+      default:
+    }
+  };
+
+  },
+
+
+
+
+    });
+  </script>
+</dom-module>

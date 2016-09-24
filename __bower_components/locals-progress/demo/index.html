@@ -1,0 +1,125 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>locals-progress Demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../locals-progress.html">
+  <link rel="import" href="../../locals-style/locals-style.html">
+
+  <style type="text/css">
+    locals-progress {
+      width: 80%;
+    }
+
+    .whitepaper {
+      height: 20px;
+    }
+    </style>
+</head>
+<body unresolved>
+
+  <template is="dom-bind" id="app">
+
+    <div class="localscanvas">
+      <div class="localstypo">
+        <div class="localswrapper">
+<!--           <div>
+            <h2>a 10 second timer starting now</h2>
+            <locals-progress time round start="{{start1}}" end="{{end1}}" size="120" fill="grey1" bg="semiblue"></locals-progress>
+            <p>start={{start1}} end={{end1}}
+            <br>fill: semiblue
+            <br>size: 120</p>
+          </div>
+
+          <h2>a 7 second timer starting in 5 seconds</h2>
+          <div>
+            <locals-progress round start="{{start2}}" end="{{end2}}" size="40" time fill="grey1" bg="semiblue"></locals-progress>
+            <p>start={{start2}} end={{end2}}
+            <br>fill: semiblue
+            <br>size: 70</p>
+          </div>
+
+          <h2>a timer that is already over</h2>
+          <div>
+            <locals-progress round start="{{start3}}" end="{{end3}}" size="90" fill="grey1" bg="semiblue"></locals-progress>
+            <p>start={{start3}} end={{end3}}
+            <br>fill: semiblue
+            <br>size: 90</p>
+          </div> -->
+
+            <locals-progress round size="90" start="120" end="60" fill="red" bg="green"></locals-progress>
+
+
+          <!--     <div>
+          <locals-progress round max="100" value="22" size="80"></locals-progress>
+          <p>value: 22</p>
+        </div>
+        <div>
+          <locals-progress round max="100" value="98" size="40" disabled></locals-progress>
+          <p>
+            value: 98
+            <br>disabled</p>
+        </div>
+      </div>
+      <div class="whitepaper"></div>
+      <div class="whitepaper"></div>
+      <p>value: 22</p>
+      <div class="whitepaper"></div>
+      <locals-progress max="100" value="22"></locals-progress>
+      <div class="whitepaper"></div>
+      <div class="whitepaper"></div>
+      <p>value: 75 • fill: red</p>
+      <div class="whitepaper"></div>
+      <locals-progress max="100" value="75" fill="red"></locals-progress>
+      <div class="whitepaper"></div>
+      <div class="whitepaper"></div>
+      <p>value: 75 • fill: lightblue, bg: darkblue</p>
+      <div class="whitepaper"></div>
+      <locals-progress max="100" value="75" fill="lightblue" bg="darkblue"></locals-progress>
+      <div class="whitepaper"></div>
+      <div class="whitepaper"></div>
+      <p>value: 56 • disabled • size: 20</p>
+      <div class="whitepaper"></div>
+      <locals-progress max="100" value="56" size="20" disabled></locals-progress>
+      -->
+    </div>
+  </div>
+</div>
+</template>
+<script>
+
+    (function(document) {
+      'use strict';
+      var self=this;
+      var app = document.querySelector('#app');
+
+      app.start1 = Math.floor(Date.now() / 1000);
+      app.end1 = app.start1+ 10;
+
+      app.start2 = Math.floor(Date.now() / 1000) + 5;
+      app.end2 = app.start2+ 7;
+
+      app.start3 = Math.floor(Date.now() / 1000) - 50;
+      app.end3 = app.start3+ 10;
+
+      window.addEventListener('WebComponentsReady', function() {
+
+      });
+
+    })(document);
+
+  </script>
+
+</body>
+</html>

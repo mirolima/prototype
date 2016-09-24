@@ -1,0 +1,44 @@
+{
+  "name": "locals-object",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "locals-object.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "neon-animation": "^1.2.3",
+    "locals-button": "https://github.com/locals-world/locals-button.git",
+    "locals-icon": "https://github.com/locals-world/locals-icon.git",
+    "iron-selector": "PolymerElements/iron-selector#^1.5.1",
+    "iron-form": "PolymerElements/iron-form#^1.0.16",
+    "locals-input": "https://github.com/locals-world/locals-input.git",
+    "iron-media-query": "^1.0.8",
+    "locals-confirm": "https://github.com/locals-world/locals-confirm.git",
+    "iron-collapse": "^1.0.8"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0"
+  },
+  "_release": "8992ba02d0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "8992ba02d07b0e7c57aa3593e17b886c64f158c9"
+  },
+  "_source": "https://github.com/locals-world/locals-object.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/locals-world/locals-object.git"
+}

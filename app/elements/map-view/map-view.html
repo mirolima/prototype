@@ -1,0 +1,140 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/geo-location/geo-location.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/map-box/map-box.html">
+<link rel="import" href="../../bower_components/locals-button/locals-button.html">
+
+<dom-module id="map-view">
+  <template>
+
+    <style>
+    :host {
+      display: block;
+      height: 100%;
+    }
+
+    span {
+      @apply(--paper-font-body1);
+    }
+
+    mapbox-map {
+      width: 100vw;
+      height: 100%;
+    }
+
+    paper-fab {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      z-index: 101;
+    }
+
+    locals-button {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      z-index: 99;
+    }
+    </style>
+    <get-offers data="{{data}}"></get-offers>
+<!--   <paper-fab icon="add" on-tap="goAddOffer"></paper-fab>
+ -->
+  <!-- <locals-button icon="addlocalcoin" small bg="blue" txtcolor="white"></locals-button> -->
+<!--     <paper-fab icon="add" on-tap="goAddOffer"></paper-fab>
+ -->    <locals-button icon="adddown" bg="blue" txtcolor="white" small on-tap="goAddOffer"></locals-button>
+    <geo-location latitude="{{latitude}}" longitude="{{longitude}}" id="geolocation"></geo-location>
+    <template is="dom-if" if="{{locationfound}}">
+      <mapbox-map
+        map="{{map}}"
+        zoom="{{zoom}}"
+        id="mapb"
+        geolocation-ui
+        access-token="pk.eyJ1Ijoia2luZ2ZsdXJrZWwiLCJhIjoiT3VwdHJzNCJ9.BxS8Ogtc7_W8qg3MpS1iNw"
+        latitude="[[latitude]]" longitude="[[longitude]]"
+        on-locationfound="resize"
+        layer="mapbox.light">
+        <template is="dom-repeat" items="{{data}}">
+          <mapbox-marker offerid="{{item.key}}" offer="{{item.ipfsobject}}" click-events on-click="selectoffer" latitude="{{item.latitude}}" longitude="{{item.longitude}}"></mapbox-map-marker>
+        </template>
+      </mapbox-map>
+    </template>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'map-view',
+
+        properties: {
+          greeting: {
+            type: String,
+            value: 'Welcome!',
+            notify: true
+          },
+
+          locationfound: {
+            type: Boolean,
+            value: false
+          },
+
+          data: {
+            type: Array,
+            value: [{'latitude': 51.230101399999995, 'longitude': 4.386792, 'info': 'testing1'},
+                    {'latitude': 51.231101399999995, 'longitude': 4.386792, 'info': 'testing2'},
+                    {'latitude': 51.232101399999995, 'longitude': 4.386792, 'info': 'testing3'},
+                    {'latitude': 51.233101399999995, 'longitude': 4.386792, 'info': 'testing4'}]
+          },
+
+          zoom: {
+            type: Number,
+            value: 17
+          }
+        },
+
+        ready: function() {
+          this.locationfound = false;
+
+          this.$.geolocation.addEventListener('geo-response', function(e) {
+            this.latitude = e.detail.latitude;
+            this.longitude = e.detail.longitude;
+            this.locationfound = true;
+            this.$.mapb.addEventListener('mapbox-map-ready', function() {
+              console.log('mapbox ready');
+            }.bind(this));
+            this.$.mapb.map.invalidateSize();
+            this.$.mapb.zoom = this.zoom;
+            console.log('got geo: ', this.latitude, ' - ', this.longitude);
+          }.bind(this));
+        },
+
+        resize: function() {
+          this.$.mapb.map.invalidateSize();
+        },
+
+        selectoffer: function(e) {
+          //console.log('arker',e.target.offerid);
+          page('/offer/' + e.target.offerid);
+        },
+
+        goAddOffer: function() {
+          page('/newoffer');
+        }
+      });
+    })();
+  </script>
+</dom-module>

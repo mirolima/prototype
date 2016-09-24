@@ -1,0 +1,675 @@
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-input/locals-input.html">
+<link rel="import" href="../locals-button/locals-button.html">
+<link rel="import" href="../locals-progress/locals-progress.html">
+<link rel="import" href="../locals-loader/locals-loader.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../locals-confirm/locals-confirm.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
+<script type="text/javascript" src="../../bower_components/jsencrypt/bin/jsencrypt.js"></script>
+<script type="text/javascript" src="../../bower_components/cryptojslib/rollups/aes.js"></script>
+<script type="text/javascript" src="../../bower_components/cryptojslib/rollups/sha3.js"></script>
+
+<!--
+Verification component listens to verification 
+
+Example:
+
+    <locals-verification-validator"></locals-verification-validator>
+
+-->
+<dom-module id="locals-verification-validator">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        background-color: var(--locals-grey1);
+
+      }
+
+/*      neon-animated-pages {
+        height: 100%;
+      }*/
+      .valbtn {
+        margin-right: 10px; 
+      }
+
+      h1 {
+        @apply(--locals-font-h1);
+        text-align: center;
+      }
+
+      p {
+        @apply(--locals-font-body1);
+      }
+
+      .total {
+        width: 100vw;
+        /*min-height: 100vh;*/
+        background-color: var(--locals-grey1);
+
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+
+
+      .canvas {
+        width: 100%;
+        min-height: 100vh;
+        box-sizing: border-box;
+        padding: 0vw 10vw 10vw 10vw;
+        background-color: var(--locals-grey1);
+        @apply(--layout-vertical);
+        @apply(--layout-center);        
+      }
+
+      .canvas h1 {
+        color: var(--locals-grey5);
+        white-space:normal;
+        margin-bottom: 30px;
+      }
+
+      .topbar {
+        width: 100%;
+        background-color: var(--locals-grey1);
+        height: var(--topbar-height);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        box-sizing: border-box;
+        padding: 10px 20px 10px 10px;
+        margin-bottom: 4vh;
+        }
+
+      .flex {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
+
+      .main {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0px 50px 0px 50px;
+        @apply(--layout-horizontal);
+        @apply(--layout-start);
+        @apply(--layout-center-justified);        
+      }
+      .addbtn {
+        margin: 15px;
+      }
+      .homebtn {
+        transition: all 5s linear;
+      }
+      .exit {
+        -ms-transform: rotate(45deg); /* IE 9 */
+        -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+        transform: rotate(45deg);
+      }
+
+      .code {
+        @apply(--opensans-semibold);
+        line-height: 30px;
+        color: var(--locals-blue);
+      }
+
+      .whitespace {
+        height: 4vh;
+      }
+
+      .tussenschot {
+        width: 100%;
+        max-width: 900px;
+        border: 0;
+        margin: 0px;
+        color: var(--locals-grey3);
+        background-color: var(--locals-grey2);
+        height: 1px;
+      }
+
+
+      .detailinlist {
+        width: 100%;
+        max-width: 900px;
+        box-sizing: border-box;
+        padding: 20px;
+
+        @apply(--layout-horizontal);
+        @apply(--layout-center);        
+      }
+
+      .detailinlist:hover {
+/*        background-color: white;*/
+        cursor: pointer;
+        @apply(--opensans-bold);       
+      }
+
+      .detailinlist p {
+        @apply(--layout-flex);
+      }
+
+      locals-objectrender {
+        width: 80%;
+      }
+
+      .backbtn {
+        width: 80%;
+        box-sizing: border-box;
+        padding: 0px 0px 10px 0px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);          
+      }
+
+
+
+/*     .refresher {
+        transition: all 1s linear;
+      -webkit-animation: rotate 0.5s linear infinite;
+      -moz-animation: rotate 0.5s linear infinite;
+      animation: rotate 0.5s linear infinite;
+     }
+
+
+      @-webkit-keyframes rotate {
+          from {-webkit-transform: rotate(0deg);}
+          to {-webkit-transform: rotate(180deg);}
+      }
+
+      @-moz-keyframes rotate {
+          from {-moz-transform: rotate(0deg);}
+          to {-moz-transform: rotate(180deg);}
+      }
+
+      @keyframes rotate {
+          from {transform: rotate(0deg);}
+          to {transform: rotate(180deg);}
+      }*/
+
+
+      
+
+    </style>
+
+
+
+
+    <div class="topbar">
+      <p class="flex"></p>
+      <locals-button bgrgba="0,0,0,0" id="exitbtn" icon="declinenew" on-tap="toHome"></locals-button>
+    </div>
+    <template is="dom-if" if="{{_is(visualmode,'list')}}">
+    <div class="total">
+ 
+
+      <template is="dom-if" if="{{loadit}}">
+          <!-- <locals-icon class="refresher" icon="refresh1" iconcolor="grey5"></locals-icon> -->
+          <locals-loader small>Checking your validations</locals-loader>
+      </template>
+      <template is="dom-if" if="{{!canvalidate}}">
+        <div class="canvas">
+          <h1>You need two validations before you validate.</h1>
+        </div>
+      </template>
+
+     <template is="dom-if" if="{{canvalidate}}">
+        <h1>Jouw code is</h1>
+        <h1 class="code"><span>{{topic}}</span></h1>
+        <div class="whitespace"></div>
+        <div class="tussenschot"></div>
+        <template is="dom-if" if="{{_objectisempty(validations,validations.*)}}">
+          <div class="whitespace"></div>
+          <p>Nothing to validate</p>
+        </template>
+        <template is="dom-if" if="{{!_objectisempty(validations,validations.*)}}">
+          <template is="dom-repeat" items="{{object2array(validations,validations.*)}}">
+            <div on-tap="goDetail" class="detailinlist">
+              <p>{{item.objectdata.data.firstname}} {{item.objectdata.data.lastname}}</p>
+              <locals-button bgrgba="0,0,0,0" icon="arrowright" small></locals-button>
+            </div>
+            <div class="tussenschot"></div>
+          </template>
+        </template>
+      </template>
+    </div>
+    </template>
+    <template is="dom-if" if="{{_is(visualmode,'detail')}}">
+      <div class="total detail">
+        <div class="tussenschot"></div>
+        <div class="whitespace"></div>
+        <div class="backbtn">
+          <locals-button bgrgba="0,0,0,0" icon="arrowleft" small on-tap="toList"></locals-button>
+          <p class="flex"></p>
+        </div>
+        <locals-objectrender hashfunction="{{hashfunction}}" key="avatar" objectdata="{{selectedobject}}" renderstate="dataview"></locals-objectrender>
+        <locals-confirm on-confirm="addValidation" on-cancel="rejectValidation"></locals-confirm>
+        {{otherpartystring}}
+        {{otherpartyhash}}
+        <div class="whitespace"></div>
+        <div class="tussenschot"></div>
+      </div>
+    </template>
+    </template>
+
+
+  </template>
+
+</dom-module>
+
+<script>
+  var lvls;
+  Polymer({
+
+    is: 'locals-verification-validator',
+
+    properties: {
+      sizeview: {
+        type: String,
+        observer: '_sizeview'
+      },
+      mode: {
+        type: String,
+      },
+      topic: {
+        type: String
+      },
+      progress: {
+        type: Number
+      },
+      contractaddr: {
+        type: String,
+        value: '0x480B73b92124A3b7a17614cc62DF218606A60cD3'
+      },
+      hashfunction: {
+        type: Function,
+        observer : '_hashfunction'
+      }
+    },
+
+    // Element Lifecycle
+
+    _getobject: function(selected){
+      
+//      console.log('selected = ',this.validations[selected]);
+//      return this.validations[selected].avatardata;
+    },
+
+    // _initvalidations: function(){
+    //   this.validations = {};
+    // },
+
+    ready: function() {
+
+      //this.utilz = this.$.util;
+
+      //debugger;
+      //this.$.util.object2array({a:1});
+    },
+
+
+
+    attached: function() {
+      
+      this.contractaddr = new Polymer.IronMetaQuery({
+          key: 'localstruthcontractaddress'
+        }).value;
+
+        this.loadit = true;
+
+      var self = this;
+      this.visualmode = 'list';    
+      console.log('locals-verification-validator topic is', this.topic);
+
+      this.whisper = document.querySelector('locals-whisperer');
+
+      lvls = document.querySelector('#lvls');
+
+      lvls.addEventListener('ls-changed', function(e){
+        console.log('changed? ',e.detail);
+        self.validations = e.detail;
+      });
+      
+      if (!this.whisper){
+        console.error('locals-verification-validator should find a whisper component');
+      }
+      this.whisper.addEventListener('msg-received', function(e) {
+        this.processMsg(e);
+      }.bind(this));
+
+      var self = this;
+      document.addEventListener('validations-update', function(e){
+         console.log(e.detail);
+         if(e.detail.number < 2){
+          self.canvalidate = false;
+        } else {
+          self.canvalidate = true;
+        }
+        self.loadit = false;
+
+
+       });
+        //handler.avatarvalidations = 
+
+    },
+
+    _hashfunction: function(){
+
+    },
+
+    detached: function() {
+
+    },
+
+    toHome: function() {
+      this.fire('to-home');
+    },
+
+    toList: function() {
+      this.visualmode = 'list';    
+    },
+
+    goDetail: function(e) {
+
+
+      this.selected = e.model.item._key;
+
+      this.selectedobject = this.validations[this.selected].objectdata;
+
+    // };
+
+      this.visualmode = 'detail';
+    },
+
+    backList: function() {
+      this.visualmode = 'list';
+    },
+
+    addValidation: function() {
+      this.addValidationToContract(function(err, txhash) {
+
+        if (this.selected) {
+          if (err) {
+            // show error to validator that his transaction errored....
+          }
+          console.log('locals-verification-validator : sending confirmation back to', this.selected);
+          this.whisper.whisperpost(this.selected, JSON.stringify({
+            command: 'sendconfirmation',
+            from: this.currentchannel,
+            data: {
+              success: (err === null),
+              txhash: txhash
+            }
+          }));
+
+          this.visualmode = 'list';
+
+          delete lvls.data[this.selected];
+          lvls.save();
+          
+
+        } else {
+          // i should have a selected item....
+        }
+      }.bind(this));
+    },
+
+    rejectValidation: function(){
+      if (this.selected) {
+        this.whisper.whisperpost(this.selected, JSON.stringify({
+          command: 'rejectconfirmation',
+          from: this.currentchannel,
+        }));
+      } else {
+        // i should have a selected item....
+      }
+
+      this.visualmode = 'list';
+      
+      // remove from list
+      delete lvls.data[this.selected];
+      lvls.save();
+      //this.set('validations.' + this.selected,null);
+    },
+
+    addValidationToContract: function(cb) {
+    
+      this.web3wallet = document.querySelector('web3-wallet');
+
+      console.log('Mijn account: ', this.fixaddress(this.web3wallet.account));
+      var otheruser = this.fixaddress(this.validations[this.selected].objectdata.account);
+      console.log('Zijn account: ', otheruser);
+
+      this.contracturl = this.resolveUrl('../../contracts/localsTruth.json');
+      this.importHref(this.contracturl, function(e) {
+        this.progress = 'addingtoindex';
+        this.contractjson = JSON.parse(e.target.import.body.innerText);
+        this.web3wallet.web3.eth.getGasPrice(function(err, result) {
+          var gasPrice = result.toNumber(10);
+          console.log('gasprice: ', gasPrice);
+          var MyContract = this.web3wallet.web3.eth.contract(this.contractjson.abi);
+          var myContractInstance = MyContract.at(this.contractaddr);
+
+          var acc= "";
+          var self = this;
+          Object.keys(this.validations[this.selected].objectdata.data).forEach(function(field){
+            acc += "|" + self.validations[self.selected].objectdata.data[field];
+          });        
+
+
+          var stringtohash = otheruser + acc;
+
+          var hash = CryptoJS.SHA3(stringtohash).toString(CryptoJS.enc.Hex);
+
+          var lsapi = document.querySelector("#lsapi");
+          var mydata = lsapi.data.collection.localsavatar.data;
+          
+          acc = '';
+
+          Object.keys(mydata).forEach(function(field){
+            acc += "|" + mydata[field];
+          }); 
+
+          var myaccount = this.fixaddress(this.web3wallet.account);
+
+          var myhash = CryptoJS.SHA3(myaccount + acc).toString(CryptoJS.enc.Hex);
+
+          console.log('his: ', hash, 'mine: ',myhash);
+         
+          result = myContractInstance.addVerification.sendTransaction(otheruser, hash, myhash , {
+              from: this.fixaddress(this.web3wallet.account),
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              gas: 2000000,
+              data: this.contractjson.bytecode
+            },
+            function(err, result) {
+              if (err !== null) {
+                console.log(err);
+                console.log('ERROR: Transaction didnt go through. See console.');
+                cb(err);
+              } else {
+                console.log('Transaction Successful!');
+                console.log('Tx hash=', result);
+                cb(null,result);
+              }
+            }.bind(this));
+
+          result2 = myContractInstance.checkVeracity.call(myhash).toNumber();
+          console.log('my hash', result2);
+        }.bind(this));
+      }.bind(this));
+
+    },
+
+    object2array: function(input) {
+      var newarray = [];
+      var p = input;
+      for (var key in p) {
+        if (p.hasOwnProperty(key)) {
+          p[key]._key = key;
+          newarray.push(p[key]);
+        }
+      };
+      return newarray;
+    },
+
+
+
+    _sizeview: function() {
+      switch (this.sizeview) {
+        case 'phone':
+          this.customStyle['--topbar-height'] = '100px';
+          this.updateStyles();
+          break;
+        case 'desktop':
+          this.customStyle['--topbar-height'] = '100px';
+          this.updateStyles();
+          break;
+        case 'xlarge':
+          this.customStyle['--topbar-height'] = '100px';
+          this.updateStyles();
+          break;
+        default:
+          console.log("!!! ** Niks");
+      }
+    },
+    _is: function(a, b) {
+      if (b === undefined) {
+        b = true;
+      }
+      return a === b;
+    },
+
+
+
+    processMsg: function(e) {
+      //debugger;
+      console.log('incoming whisper msg: ', e.detail);
+      this.web3wallet = document.querySelector('web3-wallet');
+
+      var input = e.detail.payload;
+
+      switch (input.command) {
+        // this is the broadcast channel
+        case "senduserrequest":
+          console.log('create AES key and send it to other party', input.data);
+
+          // create new channel
+          this.currentchannel = whisper.openchannel();
+          console.log('My new channel is',this.currentchannel);
+
+          var crypt = new JSEncrypt({
+            default_key_size: 512
+          });
+          crypt.setPublicKey(input.data.pubkey);
+
+          var aeskey = generateKey(50);
+
+          this.incomingrequests = {};
+          
+          this.incomingrequests[input.from] = {
+            easkey: aeskey,
+            pubkey: input.data.pubkey
+          };
+
+          lvls.save();
+
+          var encryptedkey = crypt.encrypt(aeskey);
+
+          this.whisper.whisperpost(input.from, JSON.stringify({
+            command: 'sendaeskey',
+            from: this.currentchannel,
+            data: encryptedkey
+          }));
+
+          break;
+        case "senduserdata":
+
+          if (this.currentchannel !== e.detail.topic){
+            console.log('not for me',this.currentchannel,e.detail.topic);
+            break;
+          }
+
+          var easKey = this.incomingrequests[input.from].easkey;
+
+
+
+          var decryptedAvatar = CryptoJS.AES.decrypt(input.data, easKey).toString(CryptoJS.enc.Utf8);
+          var decryptedAvatarJson;
+
+          try{
+            decryptedAvatarJson = JSON.parse(decryptedAvatar);
+            
+            this.incomingrequests[input.from].objectdata = decryptedAvatarJson;
+
+            if (!lvls.data){
+              lvls.data = {};
+            }
+            lvls.data[input.from] = this.incomingrequests[input.from];
+            lvls.save();
+          }catch(e){
+            console.log('locals-verification-validator: failed to decode avatar data',e);
+          }
+
+          // close the custom channel
+          this.whisper.closechannel(this.currentchannel);
+
+          break;
+
+        default:
+          //console.log('discard message',e.detail);
+          break;
+
+          case "requestpubkey":
+            this.whisper.whisperpost(input.from, JSON.stringify({
+            command: 'sendpubkey',
+            from: this.currentchannel,
+            data: this.fixaddress(this.web3wallet.account)
+          }));
+          break;
+
+          case "sendpubkey":
+            this.fire('pub-key', input.data);
+            console.log('received pub key: ', input.data);
+          break;
+
+      }
+
+      // create a key for symmetric encryption
+      // pass in the desired length of your key
+      function generateKey(keyLength) {
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz*&-%/!?*+=()";
+        var randomstring = '';
+
+        for (var i = 0; i < keyLength; i++) {
+          var rnum = Math.floor(Math.random() * chars.length);
+          randomstring += chars.substring(rnum, rnum + 1);
+        }
+        return randomstring;
+      };
+
+    },
+
+    fixaddress: function(address) {
+      function strStartsWith(str, prefix) {
+        return str.indexOf(prefix) === 0;
+      }
+
+      if (!strStartsWith(address, '0x')) {
+        return ('0x' + address);
+      }
+      return address;
+    },
+
+    _objectisempty: function(myobject){
+        if(!myobject){
+          return true;
+          }
+      return(Object.keys(myobject).length === 0);
+    }
+
+
+  });
+</script>

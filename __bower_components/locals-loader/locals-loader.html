@@ -1,0 +1,274 @@
+<!--
+@license
+Copyright (c) 2016 A-labs. All rights reserved.
+/////////////////
+LOCALS
+/////////////////
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <locals-loader></locals-loader>
+
+Example:
+
+    <locals-loader>
+      <h2>Hello locals-loader</h2>
+    </locals-loader>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="locals-loader">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+
+        box-sizing: border-box;
+        color:var(--locals-blue);
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+
+      :host([small]) {
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+      }
+
+
+
+      .canvas {
+        @apply(--locals-canvas);
+      }
+
+     .wide {
+        width:100%;
+      }
+
+     .whitespace {
+      height: 20px;
+     }
+      h1 {
+      @apply(--opensans-light);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 40px;
+      line-height: 52px;
+      }
+      h2 {
+       @apply(--locals-font-h2);
+      }
+      h3 {
+       @apply(--locals-font-h3);
+      }
+      h4 {
+       @apply(--locals-font-h4);
+      }
+      p {
+       @apply(--locals-font-body1);
+      }
+      small {
+       @apply(--locals-font-small);
+       color: rgba(0,0,0,0.75);
+      }
+
+      @-webkit-keyframes loadanimation {
+        0% {
+          -webkit-transform: scale(1);
+          opacity: 0.2;
+          }
+        25% {
+          -webkit-transform: scale(1.5);
+          opacity: 1;
+        }
+        50% {
+          -webkit-transform: scale(1);
+          opacity: 0.2;
+        }
+        100% {
+          -webkit-transform: scale(1);
+          opacity: 0;
+        }
+      }
+
+      @-moz-keyframes loadanimation {
+        0% {
+          -moz-transform: scale(1);
+          opacity: 0.2;
+          }
+        25% {
+          -moz-transform: scale(1.5);
+          opacity: 1;
+        }
+        50% {
+          -moz-transform: scale(1);
+          opacity: 0.2;
+        }
+        100% {
+          -moz-transform: scale(1);
+          opacity: 0;
+        }
+      }
+
+      @keyframes loadanimation {
+        0% {
+          transform: scale(1);
+          opacity: 0.2;
+          }
+        25% {
+          transform: scale(1.5);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 0.2;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        } 
+      }
+
+
+    #bigpoints {
+      margin: 10px 0px 7px 0px;
+      box-sizing: border-box;
+      padding: 12px;
+      @apply(--layout-horizontal);
+      @apply(--layout-end);
+      }
+
+
+    .bigpoint {
+      margin: 0px 7px 0px 7px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--locals-blue);
+    }
+
+
+    #smallpoints {
+      @apply(--layout-horizontal);
+      margin: 2px 0px 2px 0px;
+      box-sizing: border-box;
+      padding: 4px;
+      @apply(--layout-horizontal);
+      @apply(--layout-end);     
+      }
+
+
+    .smallpoint {
+      margin: 0px 3px 0px 3px;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background-color: var(--locals-blue);
+    }
+
+
+    #point1 {
+      -webkit-animation: loadanimation 1.5s linear 0s infinite;
+      -moz-animation: loadanimation 1.5s linear 0s infinite;
+      animation: loadanimation 1.5s linear 0s infinite;
+      }
+
+
+    #point2 {
+      -webkit-animation: loadanimation 1.5s linear 0.3s infinite;
+      -moz-animation: loadanimation 1.5s linear 0.3s infinite;
+      animation: loadanimation 1.5s linear 0.3s infinite;
+      }
+
+    #point3 {
+      -webkit-animation: loadanimation 1.5s linear 0.6s infinite;
+      -moz-animation: loadanimation 1.5s linear 0.6s infinite;
+      animation: loadanimation 1.5s linear 0.6s infinite;
+      }
+
+    </style>
+    <template is="dom-if" if="{{!small}}">
+          <h1><content></content>
+          <div id="bigpoints">
+          <div class="bigpoint" id="point1"></div>
+          <div class="bigpoint" id="point2"></div>
+          <div class="bigpoint" id="point3"></div>
+          </div>
+          </h1>
+    </template>
+    <template is="dom-if" if="{{small}}">
+          <p><content></content>
+          <div id="smallpoints">
+          <div class="smallpoint" id="point1"></div>
+          <div class="smallpoint" id="point2"></div>
+          <div class="smallpoint" id="point3"></div>
+          </div>
+          </p>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'locals-loader',
+
+      properties: {
+        /**
+         * `fancy` indicates that the element should don a monocle and tophat,
+         * while checking its pocket watch.
+         */
+        small: {
+          type: Boolean,
+          value: false,
+          observer: '_small'
+        }, 
+ 
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      _small: function(){
+      }
+
+    });
+  </script>
+</dom-module>
