@@ -22,9 +22,11 @@ This script will output the first account in your wallet - together with its pri
 
 
 You can use that PK to start testrpc with that account filled with ether to perform your tests.
+For example: ``testrpc --account="<062ba844a5094dd38f6d3d9f0682f6110ece8b9e40e40a7e68b93f528167c5bd>,50000"``
+
 After that you can migrate to the morden testnet using the same wallet.
-Get some ether on your account by visiting out testnet faucet
-http://faucet.ma.cx:3000/ and put some ether for your transactions.
+Get some ether on your account by visiting our testnet faucet
+http://faucet.ma.cx:3000/ and get some ether for your transactions.
 
 ## Build the contracts
 
