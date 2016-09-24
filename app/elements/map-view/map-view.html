@@ -54,7 +54,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
  -->
   <!-- <locals-button icon="addlocalcoin" small bg="blue" txtcolor="white"></locals-button> -->
 <!--     <paper-fab icon="add" on-tap="goAddOffer"></paper-fab>
- -->    <locals-button icon="adddown" bg="blue" txtcolor="white" small on-tap="goAddOffer"></locals-button>
+    <locals-button icon="adddown" bg="blue" txtcolor="white" small on-tap="goAddOffer"></locals-button> -->
     <geo-location latitude="{{latitude}}" longitude="{{longitude}}" id="geolocation"></geo-location>
     <template is="dom-if" if="{{locationfound}}">
       <mapbox-map
@@ -110,10 +110,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.locationfound = false;
 
           this.$.geolocation.addEventListener('geo-response', function(e) {
-            this.latitude = e.detail.latitude;
-            this.longitude = e.detail.longitude;
             this.locationfound = true;
             this.$.mapb.addEventListener('mapbox-map-ready', function() {
+              this.latitude = e.detail.latitude;
+              this.longitude = e.detail.longitude;
+              this.$.mapb.latitude = e.detail.latitude;
+              this.$.mapb.longitude = e.detail.longitude;
+              this.$.mapb.zoom = this.zoom;
+              console.log(this.latitude, this.longitude);
               console.log('mapbox ready');
             }.bind(this));
             this.$.mapb.map.invalidateSize();
