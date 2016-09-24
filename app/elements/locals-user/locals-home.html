@@ -323,11 +323,6 @@ LOCALS
     height: 100%;
     border: none;
   }
-
-
-
-
-
 </style>
 
 <neon-animated-pages selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
@@ -344,16 +339,16 @@ LOCALS
         <p class="flex"></p>
         <!-- <locals-button icon="plus" on-tap="toStore" small></locals-button> -->
       </div>
-      <div class="container">
+      <!-- <div class="container">
         <div class="main">
-          <div class="avatararea">
+          <div class="avatararea"> -->
             <!-- <locals-avatar renderstate="visual" on-tap="toProfile"  id="avatar" sizeview="{{sizeview}}"></locals-avatar>
              -->
-             <div class="avatar" on-tap="toProfile" id="avatar">
+             <!-- <div class="avatar" on-tap="toProfile" id="avatar">
                <img src="{{_getipfsurl(userdata.avatar)}}" observe="userdata.avatar">
              </div>
-          </div>
-          <div class="totalinfo">
+          </div> -->
+          <!-- <div class="totalinfo">
             <div class="accountinfo">
               <p class="account">{{userdata.username}}</p>
             </div>
@@ -370,29 +365,30 @@ LOCALS
 
               </div>
             </div>
-          </div>
+          </div> -->
+
+
 
           <!-- <locals-verification-validator></locals-verification-validator> -->
 
         </div>
 
 
-        <template is="dom-if" if="{{!_is(sizeview,'phone')}}">
+        <!-- <template is="dom-if" if="{{!_is(sizeview,'phone')}}">
           <div class="whitespace"></div>
           <div class="whitespace"></div>
-        </template>
-            <div class="topic" on-tap="topicCollapse">
+        </template> -->
+            <!-- <div class="topic" on-tap="topicCollapse">
               <template is="dom-if" if="{{!topicshown}}">
               <p>shortcode</p>
               </template>
               <iron-collapse id="topcollapser">
                 <h3>{{topic}}</h3>
               </iron-collapse>
-            </div>
+            </div> -->
 
-        <div class="tussenschot">
-        </div>
-
+        <!-- <div class="tussenschot">
+        </div> -->
           <map-view></map-view>
 <!--         <iron-selector> -->
           <!-- <template is="dom-repeat" items="{{dataset}}">
