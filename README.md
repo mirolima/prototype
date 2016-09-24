@@ -9,18 +9,24 @@
 
 ``cd truffle``
 
+``npm install eth-lightwallet``
+
+``npm install hooked-web3-provider``
+
 ``node scripts/makewallet.js``
 
-This script will output the first account in your wallet - together with it's private key:
+This script will output the first account in your wallet - together with its private key:
 
 ``Your main account is  e3b29238498e55dc5723fd43912036c5293bdef9``
 ``your PK =  <you PK will appear here>``
 
 
 You can use that PK to start testrpc with that account filled with ether to perform your tests.
+For example: ``testrpc --account="<062ba844a5094dd38f6d3d9f0682f6110ece8b9e40e40a7e68b93f528167c5bd>,50000"``
+
 After that you can migrate to the morden testnet using the same wallet.
-Get some ether on your account by visiting out testnet faucet
-http://faucet.ma.cx:3000/ and put some ether for your transactions.
+Get some ether on your account by visiting our testnet faucet
+http://faucet.ma.cx:3000/ and get some ether for your transactions.
 
 ## Build the contracts
 
@@ -54,4 +60,3 @@ The frontend app is a Polymer web-app. After you have compiled and deployed the 
 will mint 1 token to your account. Your token balance will appear in the app after the next mined block.
 
 Make sure your account also had some ether to perform your transactions ( again : use our testnet faucet )
-
