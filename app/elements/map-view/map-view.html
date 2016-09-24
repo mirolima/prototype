@@ -65,7 +65,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         access-token="pk.eyJ1Ijoia2luZ2ZsdXJrZWwiLCJhIjoiT3VwdHJzNCJ9.BxS8Ogtc7_W8qg3MpS1iNw"
         latitude="[[latitude]]" longitude="[[longitude]]"
         on-locationfound="resize"
-        layer="mapbox.light">
+        layer="mapbox.dark">
         <template is="dom-repeat" items="{{data}}">
           <mapbox-marker offerid="{{item.key}}" offer="{{item.ipfsobject}}" click-events on-click="selectoffer" latitude="{{item.latitude}}" longitude="{{item.longitude}}"></mapbox-map-marker>
         </template>
